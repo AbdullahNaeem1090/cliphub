@@ -33,6 +33,10 @@ const videoSchema= new mongoose.Schema({
     videoURL:{
         type:String,
         required:true
+    },
+    isVerified:{
+        type:Boolean,
+        default:false
     }
 },{timestamps:true})
 

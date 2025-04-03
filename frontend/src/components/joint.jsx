@@ -14,6 +14,7 @@ import axios from "axios";
 function Joint() {
   console.log("Main nav and sidebar rendered");
   const avatar = useSelector((state) => state.user.currUser.avatar);
+  const toast = useSelector((state) => state.toast);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const inpRef = useRef();
@@ -24,7 +25,6 @@ function Joint() {
   async function getHistory() {
     let resp = await axios.get("/api/user/getWatchHistory");
     if (resp) {
-      console.log(resp.data.data[0].WatchedVideos);
       dispatch(setWatchHistory(resp.data.data[0].WatchedVideos));
     }
   }
@@ -42,7 +42,6 @@ function Joint() {
 
   async function handleClick(suggestion) {
     if (suggestion?.title) {
-      console.log("video");
       let resp = await axios.get(`/api/video/playVideo/${suggestion._id}`);
       if (resp) {
         dispatch(setCurrentVideo(resp.data.data));
@@ -51,7 +50,6 @@ function Joint() {
         setSuggestion([]);
       }
     } else if (suggestion?.username) {
-      console.log("channel");
       let resp = await axios.get(`/api/user/getChannel/${suggestion._id}`);
       if (resp) {
         dispatch(setChannel(resp.data.data));
@@ -327,6 +325,15 @@ function Joint() {
       </aside>
 
       <Outlet context={result}></Outlet>
+      {toast.isVisible && (
+        <div
+          id="toast-bottom-left"
+          className="fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow-sm bottom-5 dark:text-gray-400 dark:divide-gray-700 dark:bg-gray-800 right-5"
+          role="alert"
+        >
+          <div className="text-sm font-normal">{toast.content}.</div>
+        </div>
+      )}
     </>
   );
 }

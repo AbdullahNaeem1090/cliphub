@@ -12,11 +12,14 @@ import subscribeReducer  from '../slices/subscriptionSlice';
 import playistVideoReducer from '../slices/playistVideosSlice';
 import channelReducer from '../slices/followedChannel';
 import watchHistoryReducer from '../slices/watchHistorySlice';
+import  toastReducer  from '../slices/toastSlice';
+import  videoUploadReducer  from '../slices/videoUploadSlice';
 
 const persistConfig={
   key:"root",
   version:1,
-  storage:sessionStorage
+  storage:sessionStorage,
+  blacklist: ["toastReducer","videoUploadReducer"]
 }
 
 const rootReducer=combineReducers({
@@ -29,7 +32,9 @@ const rootReducer=combineReducers({
   subscribe:subscribeReducer,
   plVideos:playistVideoReducer,
   followedTo:channelReducer,
-  history:watchHistoryReducer
+  history:watchHistoryReducer,
+  toast:toastReducer,
+  videoUpload:videoUploadReducer
 
 })
 
