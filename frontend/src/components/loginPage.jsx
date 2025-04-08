@@ -171,12 +171,12 @@
 // }
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { CSSTransition } from "react-transition-group";
+// import { CSSTransition } from "react-transition-group";
 import { loginPageUI, INPUT } from "../UI.js";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setCurrentUser } from "../slices/currentUser.js";
+import {  setCurrentUser } from "../slices/currentUser.js";
 import { setMyVideos } from "../slices/myVideoSlice"
 import { useAuth } from "../protection/useAuth.jsx";
 import { initializePlaylist } from '../slices/playlistSlice.js';
@@ -185,18 +185,18 @@ import { setLikedVideos } from '../slices/likeSlice.js';
 import { setSubscribedChannels } from "../slices/subscriptionSlice.js";
 
 export default function LoginPage() {
-    const { setIsAuthenticated } = useAuth();
+    const { setIsAuthenticated,setCurrUser,isAuthenticated,isAuthenticating } = useAuth();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
     const [errMsg, setErrMsg] = useState("");
-    const [show, setShow] = useState(true);
+    // const [show, setShow] = useState(true);
 
     const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
     function navi() {
-        setShow(false);
+        // setShow(false);
         setTimeout(() => navigate('/signUp'), 300); // Transition duration should match the timeout
     }
 
@@ -243,19 +243,19 @@ export default function LoginPage() {
     }
 
     async function onsubmit(logInData) {
-        console.log(logInData)
         try {
             let response = await axios.post("/api/user/logIn", logInData);
-            if (response.data.message === "logged In") {
+            console.log(response)
+            if (response.data.success) {
                 setIsAuthenticated(true);
-                sessionStorage.setItem('auth', JSON.stringify(true));
-                dispatch(setCurrentUser(response.data.data));
+                setCurrUser(response.data.data)
+                dispatch(setCurrentUser(response.data.data)); 
                 await getAllVideos();
                 await getMyPlaylists();
                 await getMyVideos();
                 await getLikesAndSubscribedChannels(response.data.data._id);
                 setErrMsg("");
-                setShow(false);
+                // setShow(false);
                 setTimeout(() => navigate("/main"), 300); // Transition duration should match the timeout
             }
         } catch (error) {
@@ -264,13 +264,16 @@ export default function LoginPage() {
         }
     }
 
+console.log(isAuthenticated,isAuthenticating)
+
+
     return (
-        <CSSTransition
-            in={show}
-            timeout={2000}
-            classNames="fade"
-            unmountOnExit
-        >
+        // <CSSTransition
+        //     in={show}
+        //     timeout={2000}
+        //     classNames="fade"
+        //     unmountOnExit
+        // >
             <div className={loginPageUI.bgDiv}>
                 <div className='flex space-x-3 bg-slate-300 px-4 py-4 rounded-3xl bg-opacity-60 '>
                     <div className={loginPageUI.centralLeftDiv}>
@@ -333,7 +336,7 @@ export default function LoginPage() {
                     </div>
                 </div>
             </div>
-        </CSSTransition>
+        // </CSSTransition>
     );
 }
 

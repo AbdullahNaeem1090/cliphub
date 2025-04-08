@@ -40,9 +40,6 @@ function FollowedChannel() {
 
             <Outlet></Outlet>
 
-
-
-
         </div>
     </div>
 }

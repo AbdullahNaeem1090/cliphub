@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/client";
 import LandingPage from "./components/landingPage.jsx";
 import LoginPage from "./components/loginPage.jsx";
 import SignUpPage from "./components/signUp.jsx";
-import HomePage from "./components/homePage.jsx";
+import HomePage from "./pages/HomePage.jsx";
 import Settings from "./components/settings.jsx";
 import "./index.css";
 import { Provider } from "react-redux";
@@ -16,12 +16,11 @@ import {
 import { PersistGate } from "redux-persist/integration/react";
 import SearchResultVideosPage from "./components/searchResult.jsx";
 import { store, persistor } from "./store/store.js";
-import WatchVideoPage from "./components/watchVideoPage.jsx";
+import WatchVideoPage from "./pages/WatchVideoPage.jsx";
 import Account from "./components/account.jsx";
 import MyVideos from "./components/myVideos.jsx";
 import MyPlaylist from "./components/myPlaylist.jsx";
 import UploadVideo from "./components/uploadVideo.jsx";
-import Joint from "./components/joint.jsx";
 import ProfilePic from "./components/profileChange.jsx";
 import PassChange from "./components/passchange.jsx";
 import ProtectedRoute from "./protection/protection.jsx";
@@ -34,6 +33,11 @@ import SubscribedChannelVideos from "./components/subscribedChannelVideos.jsx";
 import SubscribedChannelPlaylists from "./components/subscribedChannelPlaylists.jsx";
 import WatchHistory from "./components/watchHistory.jsx";
 import ChatHub from "./components/chatHub.jsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import AppLayout from "./layout/Applayout.jsx";
+
+const queryClient = new QueryClient();
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -41,7 +45,7 @@ const router = createBrowserRouter(
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/main" element={<ProtectedRoute element={<Joint />} />}>
+      <Route path="/main" element={<ProtectedRoute ><AppLayout/></ProtectedRoute>} >
         <Route index element={<HomePage />} />
         <Route path="homePage" element={<HomePage />} />
         <Route path="PrivatePlaylists" element={<PrivatePlaylist />} />
@@ -76,7 +80,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <AuthProvider>
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        <RouterProvider router={router} />
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} future={{ scrollRestoration: "manual" }} />
+      </QueryClientProvider>
       </PersistGate>
     </Provider>
   </AuthProvider>

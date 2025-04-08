@@ -4,7 +4,7 @@ import { apiError } from "../utils/apiError.js"
 import { ApiResponse } from "../utils/apiResponse.js"
 import jwt from "jsonwebtoken"
 
-const generateAccessAndRefereshTokens = async (userId) => {
+ const generateAccessAndRefereshTokens = async (userId) => {
     try {
         const user = await userModel.findById(userId)
         const accessToken = user.generateAccessToken()
@@ -25,27 +25,25 @@ const auth = asyncHandler(async (req, res, next) => {
     const refreshToken = req.cookies?.refreshToken;
 
     if (!accessToken) {
-        return res.status(400).json({
+        return res.status(401).json({
             message: "No access token found, please log in"
         });
     }
 
     try {
-        console.log("access Process")
         const decodedToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-        const user = await userModel.findById(decodedToken?._id).select("-password -refreshToken");
+        const user = await userModel.findById(decodedToken?._id).select("-password -refreshToken -createdAt -updatedAt -watchHistory");
         if (!user) {
             throw new apiError(404, "User not found");
         }
         req.user = user;
-        console.log("Access token is valid");
         return next();
 
     } catch (error) {
         if (error.name === 'TokenExpiredError' && refreshToken) {
-            try {console.log("refresh process")
+            try {
                 const decodedRefreshToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-                const user = await userModel.findById(decodedRefreshToken?._id);
+                const user = await userModel.findById(decodedRefreshToken?._id).select("-password -refreshToken -createdAt -updatedAt -watchHistory");
 
                 if (!user) {
                     throw new apiError(404, "User not found");
@@ -57,7 +55,9 @@ const auth = asyncHandler(async (req, res, next) => {
                 res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true });
 
                 req.user = user;
+
                 console.log("Tokens refreshed successfully");
+
                 return next();
             } catch (refreshError) {
                 return res.status(401).json({ message: "Authentication required. Please log in." });
@@ -68,31 +68,5 @@ const auth = asyncHandler(async (req, res, next) => {
     }
 });
 
-// const auth = asyncHandler(async (req, res, next) => {
-//     try {
-//         const token = req.cookies?.accessToken
-//         if (!token) {
-//             return res.json(
-//                 new ApiResponse(400,{},"no token found plz login")
-//             )
-//         }
 
-//         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-
-//         const user = await userModel.findById(decodedToken?._id).select("-password -refreshToken")
-
-//         if (!user) {
-//             throw new apiError(400,"No token")
-//         }
-
-//         req.user = user;
-//         console.log("done")
-//         next()
-
-
-//     } catch (error) {
-//         return res.status(401).json({ message: "Token Not found" })
-//     }
-// })
-
-export { auth }
+export { auth,generateAccessAndRefereshTokens }

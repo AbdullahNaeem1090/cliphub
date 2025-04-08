@@ -4,25 +4,26 @@ import { userModel } from "../models/user.model.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
+import { generateAccessAndRefereshTokens } from "../middlewares/auth.js";
 
 // forgot password functionality is yet to be done
 
-async function generateToken(userId) {
+// async function generateToken(userId) {
 
-   try {
-      const user = await userModel.findById(userId)
-      const accessToken = user.generateAccessToken()
-      const refreshToken = user.generateRefreshToken()
+//    try {
+//       const user = await userModel.findById(userId)
+//       const accessToken = user.generateAccessToken()
+//       const refreshToken = user.generateRefreshToken()
 
-      user.refreshToken = refreshToken
+//       user.refreshToken = refreshToken
 
-      await user.save({ validateBeforeSave: false })
+//       await user.save({ validateBeforeSave: false })
 
-      return { accessToken, refreshToken }
-   } catch (error) {
-      throw new apiError(500, "something went wrong")
-   }
-}
+//       return { accessToken, refreshToken }
+//    } catch (error) {
+//       throw new apiError(500, "something went wrong")
+//    }
+// }
 
 
 const userSignUp = asyncHandler(async (req, res) => {
@@ -59,7 +60,7 @@ const userSignUp = asyncHandler(async (req, res) => {
 })
 
 const userLogin = asyncHandler(async (req, res) => {
-   const { email, password, rememberMe } = req.body
+   const { email, password } = req.body
 
 
    if (email == "" || password == "") {
@@ -75,11 +76,10 @@ const userLogin = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: "Incorrect Password" })
    }
 
-   const { accessToken, refreshToken } = await generateToken(user._id)
+   const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id)
 
-   const loggedInUser = await userModel.findById(user._id).select("-password -refreshToken")
+   const loggedInUser = await userModel.findById(user._id).select("-password -refreshToken -watchHistory -createdAT -updatedAt")
 
-   if (rememberMe) {
       return res
          .cookie("accessToken", accessToken, {
             httpOnly: true,
@@ -91,16 +91,7 @@ const userLogin = asyncHandler(async (req, res) => {
             secure: true,
             maxAge: 7 * 24 * 60 * 60 * 1000
          })
-         .json(new ApiResponse(200, loggedInUser, "logged In"))
-   } else {
-      console.log("done")
-      return res
-         .cookie("accessToken", accessToken, {
-            httpOnly: true,
-            secure: true,
-         })
-         .json(new ApiResponse(200, loggedInUser, "logged In"))
-   }
+         .json(new ApiResponse(200, loggedInUser, "logged In",true))
 
 })
 
@@ -134,7 +125,7 @@ const uploadAvatar = asyncHandler(async (req, res) => {
 const currUser = asyncHandler(async (req, res) => {
 
    return res.json(
-      new ApiResponse(200, req.user, "User Verified and sent")
+      new ApiResponse(210, req.user, "User Verified and sent")
    )
 })
 

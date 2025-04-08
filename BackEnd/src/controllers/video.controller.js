@@ -10,24 +10,18 @@ import {
 import { playlistModel } from "../models/playlist.model.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import fs from "fs";
+
+// -------------------------------------------
 
 function get_PublicId_From_URL(url) {
-    const publicId = url.split('/').pop().split('.')[0];
-    console.log(publicId);
-    return publicId;
+  const publicId = url.split("/").pop().split(".")[0];
+  console.log(publicId);
+  return publicId;
 }
 
-const uploadVideo = asyncHandler(async (req, res) => {
-  console.log("api called");
-  // This will allow us to detect if the request was aborted
-  req.on("aborted", () => {
-    console.log("aborted");
-    if (req.aborted) {
-      console.log("Upload request was aborted by the client.");
-    }
-  });
+// -------------------------------------------
 
+const uploadVideo = asyncHandler(async (req, res) => {
   const { owner, title, description } = req.body;
 
   if ([owner, title].some((field) => field?.trim() === "")) {
@@ -45,7 +39,6 @@ const uploadVideo = asyncHandler(async (req, res) => {
       .json({ message: "Uploading file is missing", success: false });
   }
 
-  // Simulate cloud upload delay
   const videoUploaded = await uploadOnCloudinary(vidUrl);
   const picUploaded = await uploadOnCloudinary(picUrl);
 
@@ -68,10 +61,10 @@ const uploadVideo = asyncHandler(async (req, res) => {
     description: description || "",
   });
 
-  // Return success response
   return res.json(new ApiResponse(200, creatingVideoDoc, "✅ Video Uploaded"));
 });
 
+// newIntegration
 const verifyVideo = async (req, res) => {
   let { videoId } = req.params;
   if (!videoId) {
@@ -97,15 +90,18 @@ const verifyVideo = async (req, res) => {
   );
 };
 
+// newIntegration
 const deleteGarbageVideos = asyncHandler(async (req, res) => {
   try {
-    let videos = await videoModel.find({
+    let videos = await videoModel
+      .find({
         $or: [
           { isVerified: { $ne: true } }, // isVerified is not true
-          { isVerified: { $exists: false } } // isVerified field does not exist
-        ]
-      }).limit(2);
-      
+          { isVerified: { $exists: false } }, // isVerified field does not exist
+        ],
+      })
+      .limit(2);
+
     console.log(videos);
 
     let thumbnailArray_Of_PublicIds = [];
@@ -120,8 +116,8 @@ const deleteGarbageVideos = asyncHandler(async (req, res) => {
       return res.status(300).json({ message: "No unverified Video" });
     }
 
-    await deletefromCloudinary(thumbnailArray_Of_PublicIds,"image");
-    await deletefromCloudinary(videoArray_Of_PublicIds,"video");
+    await deletefromCloudinary(thumbnailArray_Of_PublicIds, "image");
+    await deletefromCloudinary(videoArray_Of_PublicIds, "video");
 
     const deleteResult = await videoModel.deleteMany({
       _id: { $in: videos.map((video) => video._id) },
@@ -131,12 +127,10 @@ const deleteGarbageVideos = asyncHandler(async (req, res) => {
       `${deleteResult.deletedCount} video(s) were deleted from the database.`
     );
 
-    return res
-      .status(200)
-      .json({
-        message: "Videos deleted successfully",
-        deletedCount: deleteResult.deletedCount,
-      });
+    return res.status(200).json({
+      message: "Videos deleted successfully",
+      deletedCount: deleteResult.deletedCount,
+    });
   } catch (error) {
     console.error(error);
     return res.status(400).json({ message: "Error deleting videos", error });
@@ -204,10 +198,11 @@ const deleteMyVideo = asyncHandler(async (req, res) => {
   );
 });
 
+//deprecated id:2
 const playingVideoData = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   if (!videoId) {
-    res.json({ error: "Video Id mising" });
+    return res.status(400).json({ message: "Video Id mising" });
   }
 
   const videoDetails = await videoModel.aggregate([
@@ -327,13 +322,127 @@ const playingVideoData = asyncHandler(async (req, res) => {
     },
   ]);
 
+  console.log(videoDetails);
+
   return res.json(new ApiResponse(200, videoDetails, "video details sent"));
 });
 
+//substitute id:2
+const getPlayingVideoData = asyncHandler(async (req, res) => {
+  const { videoId, userId } = req.params;
+
+  if (!videoId || !userId) {
+    return res.status(400).json({ message: "Id missing" });
+  }
+
+  let mongoVideoId = new mongoose.Types.ObjectId(videoId);
+  let mongoUserId = new mongoose.Types.ObjectId(userId);
+  let playListInfo = await playlistModel.find({
+    owner: userId,
+  });
+
+  const videoDetails = await videoModel.aggregate([
+    {
+      $match: {
+        _id: mongoVideoId,
+      },
+    },
+    {
+      $lookup: {
+        from: "likes",
+        localField: "_id",
+        foreignField: "likedVideoId",
+        as: "likesInfo",
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "VideoCreator",
+        pipeline: [
+          {
+            $lookup: {
+              from: "subscriptions",
+              localField: "_id",
+              foreignField: "subscribedTo",
+              as: "SubscriptionInfo",
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: { path: "$VideoCreator", preserveNullAndEmptyArrays: true },
+    },
+    {
+      $lookup: {
+        from: "comments",
+        localField: "_id",
+        foreignField: "Commented_Video_id",
+        as: "Comments",
+        pipeline: [
+          { $sort: { createdAt: -1 } },
+          { $limit: 10 },
+          {
+            $lookup: {
+              from: "users",
+              localField: "author",
+              foreignField: "_id",
+              as: "commenter",
+              pipeline: [{ $project: { username: 1, avatar: 1 } }],
+            },
+          },
+          { $unwind: "$commenter" },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        likesCount: { $size: "$likesInfo" },
+        isLikedByCurrentUser: { $in: [mongoUserId, "$likesInfo.likedById"] },
+        subscribersCount: { $size: "$VideoCreator.SubscriptionInfo" },
+        hasSubscribed: {
+          $in: [mongoUserId, "$VideoCreator.SubscriptionInfo.subscriber"],
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        description: 1,
+        videoURL: 1,
+        createdAt: 1,
+        likesCount: 1,
+        isLikedByCurrentUser: 1,
+        subscribersCount: 1,
+        hasSubscribed: 1,
+        "Comments._id": 1,
+        "Comments.author": 1,
+        "Comments.comment": 1,
+        "Comments.commenter": 1,
+        "VideoCreator.username": 1,
+        "VideoCreator._id": 1,
+        "VideoCreator.avatar": 1,
+      },
+    },
+  ]);
+
+  if (videoDetails.length === 0) {
+    return res.status(404).json({ message: "Video not found" });
+  }
+ videoDetails[0].playListInfo=playListInfo
+
+  return res.json(new ApiResponse(200, videoDetails[0], "Video details sent"));
+});
+
+//deprecated id:1
 const getAllVideos = asyncHandler(async (_, res) => {
   const allVideos = await videoModel.aggregate([
-    { $match: {} },
-    { $sample: { size: 26 } },
+    { $match: { isVerified: true } },
+    { $sample: { size: 10 } },
     {
       $lookup: {
         from: "users",
@@ -359,6 +468,60 @@ const getAllVideos = asyncHandler(async (_, res) => {
     },
   ]);
   return res.json(new ApiResponse(200, allVideos, "videos sent"));
+});
+
+//substitue id:1
+const getnewVideos = asyncHandler(async (req, res) => {
+  let { lastVideoId } = req.params;
+  if (!lastVideoId) {
+    lastVideoId = "000000000000000000000000";
+  }
+
+  let objId = new mongoose.Types.ObjectId(lastVideoId);
+  let limit = 9;
+
+  let videoSet = await videoModel.aggregate([
+    {
+      $match: {
+        isVerified: true,
+        _id: { $gt: objId },
+      },
+    },
+    {
+      $limit: limit,
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "videoCreaters",
+        pipeline: [
+          {
+            $project: { avatar: 1, username: 1 },
+          },
+        ],
+      },
+    },
+    { $unwind: "$videoCreaters" },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        thumbnail: 1,
+        avatar: "$videoCreaters.avatar",
+        username: "$videoCreaters.username",
+      },
+    },
+  ]);
+
+  let nextCursorId = videoSet[videoSet.length - 1]?._id || undefined;
+
+  let responseData = {
+    data: videoSet,
+    nextCursor: nextCursorId,
+  };
+  return res.json(new ApiResponse(200, responseData, "videos sent"));
 });
 
 const searchApi = asyncHandler(async (req, res) => {
@@ -426,6 +589,8 @@ const searchedVideos = asyncHandler(async (req, res) => {
 });
 
 export {
+  getPlayingVideoData,
+  getnewVideos,
   verifyVideo,
   uploadVideo,
   getMyVideos,

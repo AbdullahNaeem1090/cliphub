@@ -5,43 +5,49 @@ import { ApiResponse } from "../utils/apiResponse.js";
 
 const addLike = asyncHandler(async (req, res) => {
 
-    const { likedVideoId, likedById } = req.body
+  const { videoId, userId } = req.body;
 
-    const doc = await likeModel.create({
-        likedVideoId,likedById
-    })
+  if (!videoId || !userId) {
+    return res.status(400).json("Id missing");
+  }
 
-    return res.json(
-        new ApiResponse(200, doc, "lie added")
-    )
-})
+  const doc = await likeModel.create({
+    likedVideoId: videoId,
+    likedById: userId,
+  });
 
+  if (!doc) {
+    return res.status(500).json("could not add like");
+  }
+
+  return res.json(new ApiResponse(200, {}, "lie added", true));
+});
 
 const removeLike = asyncHandler(async (req, res) => {
+  const { videoId, userId } = req.body;
 
-    const { likedVideoId, likedById } = req.body
+  const doc = await likeModel.deleteOne({
+    likedVideoId: videoId,
+    likedById: userId,
+  });
 
-    const doc = await likeModel.deleteOne({
-        likedVideoId,likedById
-    })
+  if (!doc) {
+    return res.status(500).json("could not add like");
+  }
 
-    return res.json(
-        new ApiResponse(200, doc, "like removed")
-    )
-})
+  return res.json(new ApiResponse(200, {}, "like removed", true));
+});
 
 const likedVideos = asyncHandler(async (req, res) => {
+  const { likedById } = req.params;
 
-    const {likedById } = req.params
+  const doc = await likeModel
+    .find({
+      likedById,
+    })
+    .select("likedVideoId");
 
-    const doc = await likeModel.find({
-       likedById
-    }).select("likedVideoId")
- 
+  return res.json(new ApiResponse(200, doc, "liked"));
+});
 
-   return res.json(
-        new ApiResponse(200, doc, "liked")
-    )
-})
-
-export { addLike, removeLike,likedVideos }
+export { addLike, removeLike, likedVideos };

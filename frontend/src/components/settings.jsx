@@ -3,11 +3,11 @@ import { Link, Outlet } from "react-router-dom"
 // import { useSelector } from "react-redux"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../protection/useAuth";
+// import { useAuth } from "../protection/useAuth";
 
 
 function Settings() {
-    const { setIsAuthenticated } = useAuth()
+    // const { setIsAuthenticated } = useAuth()
     console.log("setting rendered")
 
     const navigate = useNavigate()
@@ -17,7 +17,7 @@ function Settings() {
         try {
             let res = await axios.post("/api/user/logout")
             if (res) {
-                setIsAuthenticated(false)
+                // setIsAuthenticated(false)
                 sessionStorage.setItem('auth', JSON.stringify(false));
                 setTimeout(() => {
                     navigate("/logIn")

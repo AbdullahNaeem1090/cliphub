@@ -25,6 +25,9 @@ app.use("/api/playlist",playlistRouter)
 import commentRouter from './routes/commentRoute.js'
 app.use("/api/comment",commentRouter)
 
+import replyCommeRouter from './routes/replyCommentsRoute.js'
+app.use("/api/replyComments",replyCommeRouter)
+
 import subscriptionRouter from './routes/subscriptionRoute.js'
 app.use("/api/subscription",subscriptionRouter)
 

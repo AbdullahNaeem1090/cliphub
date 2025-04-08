@@ -9,22 +9,9 @@ const videoSchema= new mongoose.Schema({
     description:{
         type:String
     },
-    likes:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"likes"
-    },
-    playListMember: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "playlist",
-        default: []
-    }],
     owner:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"users"
-    },
-    comments:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"comments"
     },
     thumbnail:{
         type:String,

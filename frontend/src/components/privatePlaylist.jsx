@@ -7,8 +7,6 @@ import { deletePlaylist } from "../slices/playlistSlice"
 
 import axios from "axios"
 
-
-
 function PrivatePlaylist() {
 
     const navigate = useNavigate()
