@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import {
-  setCurrentVideo,
   addToWatchHistory,
 } from "../slices/currentVideoSlice";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +8,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { useAuth } from "../protection/useAuth";
+import { navigateToVideoPage } from "../utils/setCurrVideo&Navigate";
 
 async function fetchHomePageVideos({ pageParam }) {
   if (!pageParam) pageParam = "";
@@ -31,6 +31,7 @@ function HomePage() {
     refetchOnWindowFocus: false,
   });
 
+
   useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage();
@@ -39,18 +40,7 @@ function HomePage() {
 
   let fetched = data?.pages.map((page) => page.data);
 
-  async function navigateToVideoPage(videoId) {
-    try {
-      console.log(videoId)
-      console.log(currUser._id)
-      let resp = await axios.get(`/api/video/getPlayingVideoData/${videoId}/${currUser._id}`);
-      dispatch(setCurrentVideo(resp.data.data));
-      console.log(resp.data.data)
-      navigate("./wvp");
-    } catch (error) {
-      console.log(error)
-    }
-  }
+
 
   if (status === "pending") {
     return (
@@ -79,7 +69,7 @@ function HomePage() {
             <div
               key={video._id}
               onClick={() => {
-                navigateToVideoPage(video._id);
+                navigateToVideoPage(video._id,currUser._id,dispatch,navigate);
                 dispatch(addToWatchHistory(video._id));
               }}
             >

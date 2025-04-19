@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { addTempComment, addTempReply, manageTempSubscriber, remTempComment, remTempReply, manageTempLikes, addTempPlaylistId, memberRemoval } from "../slices/currentVideoSlice";
 import { setCurrentVideo,addToWatchHistory } from "../slices/currentVideoSlice";
 import axios from "axios";
-import { setPlaylist, addToPlaylist, remVideoFromPlaylist } from "../slices/playlistSlice";
+import {  remVideofromPlaylist, addVideoToPlaylist } from "../slices/playlistSlice";
 import { addlikedVideo, removelikedVideo } from "../slices/likeSlice";
 import { addSubscribedChannel, removeSubscribedChannel } from "../slices/subscriptionSlice";
 import { updateRemoval, updateAddition } from "../slices/playistVideosSlice";
@@ -190,7 +190,7 @@ function PlaylistMode() {
             let resp = await axios.post("/api/playlist/createMyPlaylist", firstvideoForPlaylist)
             if (resp.data.statusCode == 200) {
                 console.log("->", resp.data.data)
-                dispatch(setPlaylist(resp.data.data, { category: "private" }))
+                // dispatch(setPlaylist(resp.data.data, { category: "private" }))
                 dispatch(addTempPlaylistId(resp.data.data._id))
                 playlistTitle.value = ""
                 setPlCard(false)
@@ -205,7 +205,7 @@ function PlaylistMode() {
 
             let resp = await axios.post("/api/playlist/addVideoToPlaylist", { pl_Name, videoIdPlaylist: currVideo._id })
             if (resp) {
-                dispatch(addToPlaylist({ videoIdPlaylist: currVideo._id, index, category: "private" }))
+                dispatch(addVideoToPlaylist({ videoIdPlaylist: currVideo._id, index, category: "private" }))
                 dispatch(addTempPlaylistId(resp.data.data))
                 dispatch(updateAddition({
                     _id: currVideo._id,
@@ -231,7 +231,7 @@ function PlaylistMode() {
             playlist.videos.includes(currVideo._id))?._id
         let resp = await axios.patch(`/api/playlist/removeVideo/${currVideo._id}/${playlistId}/${"private"}`)
         if (resp) {
-            dispatch(remVideoFromPlaylist({
+            dispatch(remVideofromPlaylist({
                 category: "private", videoId: currVideo._id
             }))
 

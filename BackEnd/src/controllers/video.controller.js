@@ -43,7 +43,6 @@ const uploadVideo = asyncHandler(async (req, res) => {
   const picUploaded = await uploadOnCloudinary(picUrl);
 
   console.log(videoUploaded);
-  console.log(picUploaded);
 
   if (!(videoUploaded?.url && picUploaded?.url)) {
     return res
@@ -56,6 +55,7 @@ const uploadVideo = asyncHandler(async (req, res) => {
   const creatingVideoDoc = await videoModel.create({
     videoURL: videoUploaded.url,
     thumbnail: picUploaded.url,
+    duration:videoUploaded.duration,
     owner,
     title,
     description: description || "",
@@ -138,45 +138,19 @@ const deleteGarbageVideos = asyncHandler(async (req, res) => {
 });
 
 const getMyVideos = asyncHandler(async (req, res) => {
-  const token = req?.cookies.accessToken;
-  if (!token) {
-    res.status(400).json({ error: "Access token expired plz login Again" });
-  }
-  const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  if (!decodedToken) {
-    res.status(400).json({ error: "User not identified plz login Again" });
+  let user = req.user;
+  console.log('hee');
+
+  if (!user._id) {
+    return res.status(400).json({ message: "Id missing" });
   }
 
-  const userId = decodedToken._id;
-
-  const userExist = await userModel.findById(userId);
-
-  if (!userExist) {
-    res.status(400).json({ error: "User doest not exist" });
-  }
-
-  const myVideos = await userModel.aggregate([
-    {
-      $match: { _id: userExist._id },
-    },
-    {
-      $lookup: {
-        from: "videos",
-        localField: "_id",
-        foreignField: "owner",
-        as: "videoList",
-      },
-    },
-    {
-      $project: {
-        username: 1,
-        videoList: 1,
-      },
-    },
-  ]);
+  const myVideos = await videoModel
+    .find({ owner: user._id, isVerified: true })
+    .select("_id thumbnail title createdAt");
 
   return res.json(
-    new ApiResponse(200, myVideos, "Myvideos retrieval successfull")
+    new ApiResponse(200, myVideos, "Myvideos retrieval successfull", true)
   );
 });
 
@@ -433,7 +407,7 @@ const getPlayingVideoData = asyncHandler(async (req, res) => {
   if (videoDetails.length === 0) {
     return res.status(404).json({ message: "Video not found" });
   }
- videoDetails[0].playListInfo=playListInfo
+  videoDetails[0].playListInfo = playListInfo;
 
   return res.json(new ApiResponse(200, videoDetails[0], "Video details sent"));
 });

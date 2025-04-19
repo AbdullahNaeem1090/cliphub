@@ -1,17 +1,24 @@
 import axios from "axios";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addVideoInPlaylist,
-  createNewPlaylist,
-  removeVideofromPlaylist,
-} from "../slices/currentVideoSlice";
+import { useDispatch } from "react-redux";
+
 import { CustomToast } from "../utils/showUtils";
 import PropTypes from "prop-types";
+import {
+  _createPlaylist,
+  addVideoToPlaylist,
+  remVideofromPlaylist,
+} from "../slices/playlistSlice";
 
-function PlaylistBox({ openPlayListCard, setOpenPlayListCard }) {
-  
-  const currVideo = useSelector((state) => state.currentVideo);
+function TryPlaylistBox({
+  openPlayListCard,
+  setOpenPlayListCard,
+  videoId,
+  playlist,
+  createPlaylistOption,
+}) {
+  console.log(videoId);
+
   const [isPlaylistNameInpVisible, setIsPlaylistNameInpVisible] =
     useState(false);
   const dispatch = useDispatch();
@@ -22,7 +29,7 @@ function PlaylistBox({ openPlayListCard, setOpenPlayListCard }) {
     if (!playlistTitle) return;
     const firstvideoForPlaylist = {
       title: playlistTitle,
-      playlistVideo: [currVideo._id],
+      playlistVideo: [videoId],
       category: "private",
     };
     try {
@@ -31,7 +38,7 @@ function PlaylistBox({ openPlayListCard, setOpenPlayListCard }) {
         firstvideoForPlaylist
       );
       if (resp.data.status == 200) {
-        dispatch(createNewPlaylist(resp.data.data));
+        dispatch(_createPlaylist(resp.data.data));
         playlistelement.value = "";
         setOpenPlayListCard(false);
         setIsPlaylistNameInpVisible(false);
@@ -43,9 +50,8 @@ function PlaylistBox({ openPlayListCard, setOpenPlayListCard }) {
     }
   }
 
-  async function updatePlaylist(add, playlistId, videoId) {
+  async function updatePlaylist(add, playlistId, category, videoId) {
     try {
-      console.log(playlistId);
       let resp;
       if (add) {
         resp = await axios.post("/api/playlist/addVideoToPlaylist", {
@@ -54,9 +60,10 @@ function PlaylistBox({ openPlayListCard, setOpenPlayListCard }) {
         });
         if (resp.data.success) {
           dispatch(
-            addVideoInPlaylist({
+            addVideoToPlaylist({
               pList_Id: playlistId,
               videoId,
+              category,
             })
           );
           CustomToast(dispatch, "Added");
@@ -67,9 +74,10 @@ function PlaylistBox({ openPlayListCard, setOpenPlayListCard }) {
         );
         if (resp.data.success) {
           dispatch(
-            removeVideofromPlaylist({
+            remVideofromPlaylist({
               pList_Id: playlistId,
               videoId,
+              category,
             })
           );
           CustomToast(dispatch, "Removed");
@@ -82,10 +90,8 @@ function PlaylistBox({ openPlayListCard, setOpenPlayListCard }) {
   }
 
   function isPresentInPlaylist(playlistId) {
-    let playlist = currVideo.playListInfo.filter(
-      (playlist) => playlist._id === playlistId
-    );
-    return playlist[0].videos.includes(currVideo._id);
+    let playList = playlist.filter((playlist) => playlist._id === playlistId);
+    return playList[0].videos.includes(videoId);
   }
 
   return (
@@ -111,8 +117,8 @@ function PlaylistBox({ openPlayListCard, setOpenPlayListCard }) {
         </button>
       </div>
       <ul>
-        {currVideo?.playListInfo?.length > 0 &&
-          currVideo.playListInfo.map((suggestion, index) => (
+        {playlist.length > 0 &&
+          playlist.map((suggestion, index) => (
             <li key={suggestion._id} className="w-full">
               <label
                 htmlFor={`checkbox-${index}`}
@@ -121,12 +127,17 @@ function PlaylistBox({ openPlayListCard, setOpenPlayListCard }) {
                 <input
                   type="checkbox"
                   id={`checkbox-${index}`}
-                  defaultChecked={isPresentInPlaylist(suggestion._id)}
+                  checked={isPresentInPlaylist(suggestion._id)}
                   className="w-5 h-5 rounded-md bg-gray-700 checked:bg-blue-500 checked:border-blue-500 border border-gray-500 appearance-none cursor-pointer transition-all duration-150"
                   onClick={(e) => {
                     e.stopPropagation(); // stops double toggling if needed
                     let isChecked = e.target.checked;
-                    updatePlaylist(isChecked, suggestion._id, currVideo._id);
+                    updatePlaylist(
+                      isChecked,
+                      suggestion._id,
+                      suggestion.category,
+                      videoId
+                    );
                   }}
                 />
                 <span className="flex-1 text-gray-300 font-medium text-left">
@@ -136,37 +147,45 @@ function PlaylistBox({ openPlayListCard, setOpenPlayListCard }) {
             </li>
           ))}
       </ul>
+      {createPlaylistOption && (
+        <>
+          <button
+            type="button"
+            className="w-full flex justify-between px-4 py-2 font-medium text-left rtl:text-right  cursor-pointer text-gray-300 hover:bg-white hover:bg-opacity-5"
+            onClick={() => setIsPlaylistNameInpVisible(true)}
+          >
+            Create Playlist{" "}
+            <img src="/src/assets/add.png" className="h-5 w-5" alt="" />
+          </button>
+          <div
+            className={isPlaylistNameInpVisible ? "flex flex-col " : "hidden"}
+          >
+            <input
+              id="myInput"
+              type="text"
+              placeholder="Playlist Name"
+              className="m-2 p-1 w-auto border rounded-lg text-white bg-gray-800 border-gray-600 focus:outline-none "
+            />
 
-      <button
-        type="button"
-        className="w-full flex justify-between px-4 py-2 font-medium text-left rtl:text-right  cursor-pointer text-gray-300 hover:bg-white hover:bg-opacity-5"
-        onClick={() => setIsPlaylistNameInpVisible(true)}
-      >
-        Create Playlist{" "}
-        <img src="/src/assets/add.png" className="h-5 w-5" alt="" />
-      </button>
-      <div className={isPlaylistNameInpVisible ? "flex flex-col " : "hidden"}>
-        <input
-          id="myInput"
-          type="text"
-          placeholder="Playlist Name"
-          className="m-2 p-1 w-auto border rounded-lg text-white bg-gray-800 border-gray-600 focus:outline-none "
-        />
-
-        <button
-          onClick={createPlaylist}
-          className="mx-2 my-2 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
-        >
-          Create
-        </button>
-      </div>
+            <button
+              onClick={createPlaylist}
+              className="mx-2 my-2 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg"
+            >
+              Create
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
-PlaylistBox.propTypes = {
+TryPlaylistBox.propTypes = {
   openPlayListCard: PropTypes.bool,
   setOpenPlayListCard: PropTypes.func,
+  videoId: PropTypes.string,
+  playlist: PropTypes.array,
+  createPlaylistOption: PropTypes.bool,
 };
 
-export default PlaylistBox;
+export default TryPlaylistBox;

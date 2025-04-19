@@ -1,19 +1,21 @@
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
-import WatchPageSideVideos from "../components/watchPageSideVideos";
 import TryPlaylistBox from "../components/dummy";
 import VideoSection from "../components/videoSection";
+import PlaylistSideVideos from "../components/palylistSideVideos";
 
 function WatchVideoPage() {
   const currVideo = useSelector((state) => state.currentVideo);
   const { _private: playlist } = useSelector((state) => state.playlist);
   const [openPlayListCard, setOpenplaylistCard] = useState(false);
   const [playlistVideos,setPlaylistVideos]=useState([])
-
   let isInPlaylist = playlist?.some((playlist) =>
     playlist?.videos.includes(currVideo._id)
   );
+
+ 
+ 
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -27,10 +29,9 @@ function WatchVideoPage() {
           setOpenplaylistCard={setOpenplaylistCard}
           isInPlaylist={isInPlaylist}
           playlistVideos={playlistVideos}
-
         />
 
-        <WatchPageSideVideos  setPlaylistVideos={setPlaylistVideos} />
+        <PlaylistSideVideos setPlaylistVideos={setPlaylistVideos} />
 
         <TryPlaylistBox
           openPlayListCard={openPlayListCard}

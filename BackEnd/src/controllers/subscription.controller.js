@@ -27,47 +27,45 @@ const unSubscribe = asyncHandler(async (req, res) => {
     )
 })
 const subscribedChannels = asyncHandler(async (req, res) => {
-
+console.log("called");
     const { subscriber } = req.params
-    console.log(subscriber)
-    const doc = await subscriptionModel.aggregate([
-        {
-            $match: { subscriber:new mongoose.Types.ObjectId(subscriber) }
-        },
-        {
-            $lookup: {
+
+    if(!subscriber){
+        return res.json("Subscriber Id missing")
+    }
+
+    const channels = await subscriptionModel.aggregate(
+        [
+            {
+              $match: {
+                subscriber: new mongoose.Types.ObjectId(subscriber)
+              }
+            },
+            {
+              $lookup: {
                 from: "users",
                 localField: "subscribedTo",
                 foreignField: "_id",
-                as: "ContentCreators",
-                pipeline: [
-                    {
-                        $lookup: {
-                            from: "subscriptions",
-                            localField: "_id",
-                            foreignField: "subscribedTo",
-                            as: "subscriptionDetails",
-                        }
-                    },
-                    {
-                        $project: {
-                            _id:1,
-                            username: 1,
-                            email: 1,
-                            avatar: 1,
-                        }
-                    }
-                ]
+                as: "Channel"
+              }
+            },
+            {
+              $unwind: "$Channel"
+            },
+            {
+                $project: {
+                    "Channel._id":1,
+                    "Channel.email": 1,
+                    "Channel.username": 1,
+                    "Channel.avatar": 1
+                  }
             }
-        },
-        {
-            $project:{
-                ContentCreators:1
-            }
-        }
-    ])
+          ]
+    )
+
+    console.log(channels);
     return res.json(
-        new ApiResponse(200, doc, "channel sent")
+        new ApiResponse(200, channels, "channel sent",true)
     )
 })
 

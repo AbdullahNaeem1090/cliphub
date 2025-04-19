@@ -31,16 +31,7 @@ const initialState = {
   Comments: [],
   playListInfo: [],
 };
-//   {
-//     "_id": "67efd05420f35a9757e3d242",
-//     "owner": "67ee53f86407375ef00a6de7",
-//     "title": "check",
-//     "videos": [
-//         "66d1b393ffb0050cbb964550"
-//     ],
-//     "category": "private",
-//     "__v": 0
-// }
+
 
 export const currentVideoSlice = createSlice({
   name: "currentVideoSlicer",

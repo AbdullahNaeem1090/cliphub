@@ -31,8 +31,8 @@ const dispatch=useDispatch()
         <p className="text-white text-3xl font-serif text-center bg-black bg-opacity-50 my-2 py-2 rounded-md lg:mt-0">Videos</p>
         <div className="    lg:overflow-y-scroll h-[515px] scrollbar-hide">
             {
-                channel[0].videos.map((video) => (
-                    <div  onClick={()=>navigateToVideoPage(video._id)}
+                channel[0].videos.map((video,index) => (
+                    <div key={index}  onClick={()=>navigateToVideoPage(video._id)}
                         className="flex flex-col max-h-90 md:max-h-56 lg:max-h-52 text-white rounded-lg shadow md:flex-row md:w-full hover:bg-opacity-20 p-1  bg-white bg-opacity-5 mb-2 md:p-2  my-2
                     ">
 

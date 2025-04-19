@@ -1,17 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../protection/useAuth.jsx";
+import { useDispatch } from "react-redux";
+import { getUserPlaylists } from "../utils/setCurrVideo&Navigate.js";
 
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { isAuthenticated,isAuthenticating } = useAuth()
+  const dispatch = useDispatch();
+  const { currUser,isAuthenticated,isAuthenticating } = useAuth()
 
 
-console.log(isAuthenticated,isAuthenticating)
 
   setTimeout(() => {
     if (isAuthenticated) {
+      console.log("called")
+      getUserPlaylists(dispatch,currUser._id)
       navigate("/main");
+
     } else if(!isAuthenticated && !isAuthenticating){
       navigate("/logIn");
     }

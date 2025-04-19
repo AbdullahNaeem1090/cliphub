@@ -1,5 +1,4 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { apiError } from "../utils/apiError.js";
 import { userModel } from "../models/user.model.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { videoModel } from "../models/video.model.js";
@@ -9,79 +8,49 @@ import jwt from "jsonwebtoken";
 
 const createPlaylist = asyncHandler(async (req, res) => {
   const { title, playlistVideo, category } = req.body;
-  if ([title, playlistVideo, category].some((field) => field == "")) {
+  if ([title, category].some((field) => field == "")) {
     res.status(400).json({ error: "A field is missing" });
   }
-  const token = req?.cookies.accessToken;
-  if (!token) {
-    res.status(400).json({ error: "Access token expired plz login Again" });
-  }
-  const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  if (!decodedToken) {
-    res.status(400).json({ error: "User not identified plz login Again" });
-  }
-  const userId = decodedToken._id;
-  const userExist = await userModel.findById(userId);
-  if (!userExist) {
-    res.status(400).json({ error: "User doest not exist" });
-  }
+  let video=[]
+  if (playlistVideo) {
+    video = [playlistVideo];
+  } 
 
   const createdPlaylist = await playlistModel.create({
-    owner: userId,
+    owner: req.user._id,
     title: title,
-    videos: [playlistVideo],
+    videos: video,
     category: category,
   });
-
-  console.log(createdPlaylist);
 
   if (!createdPlaylist) {
     res.status(500).json({ error: "Server Side error" });
   }
 
-  if (createdPlaylist.category == "private") {
-    const updateVideoDoc = await videoModel.findByIdAndUpdate(
-      createdPlaylist.videos[0],
-      {
-        $push: { playListMember: createdPlaylist._id },
-      },
-      { new: true }
-    );
-    if (!updateVideoDoc) {
-      res.json({ error: "video doc couldnt be updated" });
-    }
-    console.log(updateVideoDoc);
-  }
-
-  return res.json(new ApiResponse(200, createdPlaylist, "playlist created"));
+  return res.json(
+    new ApiResponse(200, createdPlaylist, "playlist created", true)
+  );
 });
 
 const getPlaylists = asyncHandler(async (req, res) => {
-  const token = req.cookies.accessToken;
-  if (!token) {
-    res.status(400).json({ error: "Access token expired plz login Again" });
+  let { userId } = req.params;
+  if (!userId) {
+    return res.status(400).json({ message: "id missing" });
   }
-  const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  if (!decodedToken) {
-    res.status(400).json({ error: "User not identified plz login Again" });
-  }
-  const userId = decodedToken._id;
-  const userExist = await userModel.findById(userId);
-  if (!userExist) {
-    res.status(400).json({ error: "User doest not exist" });
-  }
-
-  const myPlaylists = await playlistModel.find({
-    owner: userId,
-    category: "public",
-  });
-  const privatePlaylists = await playlistModel.find({
-    owner: userId,
-    category: "private",
-  });
-  return res.json(
-    new ApiResponse(200, { myPlaylists, privatePlaylists }, "playlist created")
-  );
+  const myPlaylists = await playlistModel.aggregate([
+    {
+      $match: {
+        owner: new mongoose.Types.ObjectId(userId),
+      },
+    },
+    {
+      $group: {
+        _id: "$category",
+        docs: { $push: "$$ROOT" },
+      },
+    },
+  ]);
+  return res.json(new ApiResponse(200, myPlaylists, "playlist fetcted", true));
 });
 
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
@@ -90,7 +59,6 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
   if (!playlistId || !videoId) {
     return res.status(400).json({ error: "A field is missing" });
   }
-
 
   const updatedPlaylist = await playlistModel.updateOne(
     { _id: playlistId },
@@ -103,38 +71,40 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
     return res.status(400).json({ error: "server Error" });
   }
 
-  return res.json(new ApiResponse(200, {}._id, "video added",true));
+  return res.json(new ApiResponse(200, {}._id, "video added", true));
 });
 
 const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
-    const { videoId, playlistId } = req.params;
-    if (!videoId || !playlistId) {
-      return res.status(400).json({ error: "ID missing" });
-    }
-  
-    const updatedPlaylist = await playlistModel.findOneAndUpdate(
-      { _id: playlistId },
-      { $pull: { videos: videoId } },
-    );
-  
-    if (!updatedPlaylist) {
-      return res.status(404).json({ error: "Playlist not found" });
-    }
-  
-    return res.json(new ApiResponse(200, {}, "Video removed from playlist", true));
-  });
-  
+  const { videoId, playlistId } = req.params;
+  if (!videoId || !playlistId) {
+    return res.status(400).json({ error: "ID missing" });
+  }
+
+  const updatedPlaylist = await playlistModel.findOneAndUpdate(
+    { _id: playlistId },
+    { $pull: { videos: videoId } }
+  );
+
+  if (!updatedPlaylist) {
+    return res.status(404).json({ error: "Playlist not found" });
+  }
+
+  return res.json(
+    new ApiResponse(200, {}, "Video removed from playlist", true)
+  );
+});
 
 const getPlaylistVideos = asyncHandler(async (req, res) => {
   const { playlistId } = req.params;
-  console.log(playlistId);
+  if (!playlistId) {
+    res.status(400).json({ error: "id is missing" });
+  }
   const playlistVideos = await playlistModel.aggregate([
     {
       $match: {
         _id: new mongoose.Types.ObjectId(playlistId),
       },
     },
-
     {
       $lookup: {
         from: "videos",
@@ -147,15 +117,27 @@ const getPlaylistVideos = asyncHandler(async (req, res) => {
               from: "users",
               localField: "owner",
               foreignField: "_id",
-              as: "videoCreator",
+              as: "creator",
               pipeline: [
                 {
                   $project: {
-                    username: 1,
                     avatar: 1,
+                    username: 1,
                   },
                 },
               ],
+            },
+          },
+          {
+            $unwind: "$creator",
+          },
+          {
+            $project: {
+              _id: 1,
+              title: 1,
+              thumbnail: 1,
+              avatar: "$creator.avatar",
+              username: "$creator.username",
             },
           },
         ],
@@ -163,16 +145,15 @@ const getPlaylistVideos = asyncHandler(async (req, res) => {
     },
     {
       $project: {
-        playlistVideos: {
-          title: 1,
-          _id: 1,
-          thumbnail: 1,
-          videoCreator: 1,
-        },
+        _id: 1,
+        playlistVideos: 1,
       },
     },
   ]);
-  res.json(new ApiResponse(200, playlistVideos, "videos Sent"));
+
+  res.json(
+    new ApiResponse(200, playlistVideos[0], "playlist videos sent", true)
+  );
 });
 
 const deletePlaylist = asyncHandler(async (req, res) => {
@@ -198,6 +179,26 @@ const deletePlaylist = asyncHandler(async (req, res) => {
   );
 });
 
+const getPLThumbnail = asyncHandler(async (req, res) => {
+  const { playlistId } = req.params;
+
+  const playlist = await playlistModel.findById(playlistId).populate({
+    path: "videos",
+    select: "thumbnail",
+    options: { limit: 1 },
+  });
+
+  if (playlist.videos.length === 0) {
+    return res.json({ success: false, message: "No videos found" });
+  }
+
+  const firstThumbnail = playlist.videos[0].thumbnail;
+
+  return res.json(
+    new ApiResponse(200, firstThumbnail, "fethced the thumbnal", true)
+  );
+});
+
 export {
   createPlaylist,
   getPlaylists,
@@ -205,4 +206,5 @@ export {
   removeVideoFromPlaylist,
   getPlaylistVideos,
   deletePlaylist,
+  getPLThumbnail,
 };

@@ -21,6 +21,10 @@ const videoSchema= new mongoose.Schema({
         type:String,
         required:true
     },
+    duration:{
+        type:Number,
+        required:true
+    },
     isVerified:{
         type:Boolean,
         default:false

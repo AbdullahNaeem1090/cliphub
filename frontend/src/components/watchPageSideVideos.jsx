@@ -49,9 +49,9 @@ function WatchPageSideVideos() {
   return (
     <div className="flex-1 rounded-lg lg:ml-2 lg:border-l lg:w-[30%] ">
       <div className="hidden lg:block text-white font-extrabold text-2xl pl-3 mb-2">
-        Other Videos
+         Videos
       </div>
-      <div className="lg:h-[1200px] lg:overflow-y-scroll scrollbar-hide lg:border-y ">
+      <div className="lg:h-[1200px] lg:overflow-y-scroll scrollbar-hide lg:border-y mt-3 p-1">
         {fetchedVideos.length &&
           fetchedVideos
             .filter((video) => video._id !== currVideo._id)
@@ -59,7 +59,7 @@ function WatchPageSideVideos() {
               <div
                 key={video._id}
                 className="flex flex-col max-h-96 md:h-60 
-                lg:h-36 text-white rounded-lg shadow md:flex-row md:w-full hover:bg-white hover:bg-opacity-10 p-1  mb-2 md:p-2 md:mb-0"
+                lg:h-36 text-white rounded-lg shadow md:flex-row md:w-[97%] hover:bg-white hover:bg-opacity-10 p-1  mb-2 md:p-1 md:mb-0"
                 onClick={() => changeVideo(video._id)}
               >
                 <img
@@ -77,11 +77,11 @@ function WatchPageSideVideos() {
                     />
                   </div>
                   <div className="flex flex-col pl-1 pt-1  leading-normal md:w-full">
-                    <h5 className="mb-1 text-xl  tracking-tight text-slate-200  max-h-36  overflow-hidden">
+                    <p className="mb-1 text-md  tracking-tight text-slate-200  max-h-36  overflow-hidden">
                       {video.title}
-                    </h5>
+                    </p>
                     <div className="md:flex items-center">
-                      <div className="hidden md:block h-6 w-6 m-1 rounded-full">
+                      <div className="hidden md:block h-6 w-6 my-1 rounded-full">
                         <img
                           src={video.avatar || "/src/assets/defaultAvatar.png"}
                           alt=""
