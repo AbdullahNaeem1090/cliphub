@@ -1,7 +1,7 @@
 import { useNavigate, useOutletContext } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import axios from "axios"
-import { setCurrentVideo, addToWatchHistory } from "../slices/currentVideoSlice"
+import { setCurrentVideo } from "../slices/currentVideoSlice"
 
 
 function SearchResultVideosPage() {
@@ -17,7 +17,6 @@ function SearchResultVideosPage() {
         let resp = await axios.get(`/api/video/playVideo/${videoId}`)
         if (resp) {
             dispatch(setCurrentVideo(resp.data.data))
-            dispatch(addToWatchHistory(videoId))
             navigate("/main/wvp")
         }
     }

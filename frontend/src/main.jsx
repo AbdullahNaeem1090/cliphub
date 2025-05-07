@@ -3,7 +3,7 @@ import LandingPage from "./pages/landingPage.jsx";
 import LoginPage from "./pages/loginPage.jsx";
 import SignUpPage from "./pages/signUp.jsx";
 import HomePage from "./pages/HomePage.jsx";
-import Settings from "./components/settings.jsx";
+import Settings from "./pages/SettingsPage.jsx";
 import "./index.css";
 import { Provider } from "react-redux";
 import {
@@ -26,19 +26,16 @@ import ProfilePic from "./components/profileChange.jsx";
 import PassChange from "./components/passchange.jsx";
 import ProtectedRoute from "./protection/protection.jsx";
 import { AuthProvider } from "./protection/useAuth.jsx";
-import PlaylistMode from "./components/playlistMode.jsx";
 import Subscription from "./pages/SubscriptionPage.jsx";
-import FollowedChannel from "./components/followedChannel.jsx";
-import SubscribedChannelVideos from "./components/subscribedChannelVideos.jsx";
-import SubscribedChannelPlaylists from "./components/subscribedChannelPlaylists.jsx";
-import WatchHistory from "./components/watchHistory.jsx";
-import ChatHub from "./components/chatHub.jsx";
+import FollowedChannel from "./layout/FollowedChannel.jsx";
+import SubscribedChannelVideos from "./pages/FollowedChannel/VideosPage.jsx";
+import SubscribedChannelPlaylists from "./pages/FollowedChannel/PlaylistPage.jsx";
+import WatchHistory from "./pages/WatchHistoryPage.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppLayout from "./layout/Applayout.jsx";
 import PersonalPlaylists from "./pages/PersonalPlaylists.jsx";
 
 const queryClient = new QueryClient();
-
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -46,22 +43,33 @@ const router = createBrowserRouter(
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/main" element={<ProtectedRoute ><AppLayout/></ProtectedRoute>} >
+      <Route
+        path="/main"
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<HomePage />} />
         <Route path="homePage" element={<HomePage />} />
         <Route path="PrivatePlaylists" element={<PersonalPlaylists />} />
         <Route path="srvp" element={<SearchResultVideosPage />} />
         <Route path="wvp" element={<WatchVideoPage />} />
-        <Route path="watchPlaylist/:playlistId" element={<WatchPlaylistPage />} />
+        <Route
+          path="watchPlaylist/:playlistId"
+          element={<WatchPlaylistPage />}
+        />
         <Route path="watchHistory" element={<WatchHistory />} />
         <Route path="subscription" element={<Subscription />} />
-        <Route path="chathub" element={<ChatHub />} />
-        <Route path="followedPage" element={<FollowedChannel />}>
+        <Route
+          path="followedPage/:channelId/:channelName/:email/:avatar/:subscribers"
+          element={<FollowedChannel />}
+        >
           <Route index element={<SubscribedChannelVideos />} />
           <Route path="videos" element={<SubscribedChannelVideos />} />
           <Route path="playlists" element={<SubscribedChannelPlaylists />} />
         </Route>
-        <Route path="playlist" element={<PlaylistMode />} />
         <Route path="settings" element={<Settings />}>
           <Route path="changedp" element={<ProfilePic />} />
           <Route path="changepass" element={<PassChange />} />
@@ -82,9 +90,12 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <AuthProvider>
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} future={{ scrollRestoration: "manual" }} />
-      </QueryClientProvider>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider
+            router={router}
+            future={{ scrollRestoration: "manual" }}
+          />
+        </QueryClientProvider>
       </PersistGate>
     </Provider>
   </AuthProvider>

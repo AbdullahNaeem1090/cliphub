@@ -17,7 +17,7 @@ function AccountLayout() {
           alt="pic"
         />
         <h5 className="mb-1 text-xl font-medium text-white">{currUser.email}</h5>
-        <span className="text-sm text-gray-400">Subscribers:100k</span>
+        <span className="text-sm text-gray-400">Subscribers : {currUser.subscribersCount}</span>
         <div className="px-4 py-1 mt-3 text-white font-semibold bg-gradient-to-r from-blue-700 to-purple-600 rounded-3xl">
           {currUser.username}
         </div>

@@ -97,21 +97,7 @@ function SideBar({showSideBar}) {
                 </span>
               </Link>
             </li>
-            <li>
-              <Link
-                to="chathub"
-                className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gradient-to-r from-gray-950 via-blue-800 to-gray-950"
-              >
-                <img
-                  src="/src/assets/chathub.png"
-                  alt=""
-                  className="h-6 w-6 "
-                />
-                <span className="flex-1 ms-3 whitespace-nowrap text-white">
-                  ChatHub
-                </span>
-              </Link>
-            </li>
+           
           </ul>
         </div>
       </aside>

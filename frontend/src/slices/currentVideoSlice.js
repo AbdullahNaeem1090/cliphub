@@ -1,17 +1,5 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice } from "@reduxjs/toolkit";
 
-export const addToWatchHistory = createAsyncThunk(
-  "currentVideo/addToWatchHistory",
-  async (videoId) => {
-    const response = await axios.patch(
-      `/api/user/addToWatchHistory/${videoId}`
-    );
-
-    console.log(response);
-    return response.data;
-  }
-);
 
 const initialState = {
   _id: "",
@@ -55,7 +43,6 @@ export const currentVideoSlice = createSlice({
         playlist.videos.push(videoId);
       }
     },
-
     removeVideofromPlaylist: (state, action) => {
       const { pList_Id, videoId } = action.payload;
 

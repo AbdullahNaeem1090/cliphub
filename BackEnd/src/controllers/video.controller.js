@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 
 // -------------------------------------------
 
-function get_PublicId_From_URL(url) {
+export function get_PublicId_From_URL(url) {
   const publicId = url.split("/").pop().split(".")[0];
   console.log(publicId);
   return publicId;
@@ -137,21 +137,23 @@ const deleteGarbageVideos = asyncHandler(async (req, res) => {
   }
 });
 
-const getMyVideos = asyncHandler(async (req, res) => {
-  let user = req.user;
-  console.log('hee');
+const getUserVideos = asyncHandler(async (req, res) => {
+  const {userId}=req.params
 
-  if (!user._id) {
+  if (!userId) {
     return res.status(400).json({ message: "Id missing" });
   }
 
+  console.log(userId);
+
   const myVideos = await videoModel
-    .find({ owner: user._id, isVerified: true })
-    .select("_id thumbnail title createdAt");
+    .find({ owner: userId, isVerified: true })
+    .select("_id thumbnail title videoURL createdAt");
 
   return res.json(
     new ApiResponse(200, myVideos, "Myvideos retrieval successfull", true)
   );
+  
 });
 
 const deleteMyVideo = asyncHandler(async (req, res) => {
@@ -485,6 +487,7 @@ const getnewVideos = asyncHandler(async (req, res) => {
         thumbnail: 1,
         avatar: "$videoCreaters.avatar",
         username: "$videoCreaters.username",
+        videoURL:1
       },
     },
   ]);
@@ -495,7 +498,7 @@ const getnewVideos = asyncHandler(async (req, res) => {
     data: videoSet,
     nextCursor: nextCursorId,
   };
-  return res.json(new ApiResponse(200, responseData, "videos sent"));
+  return res.json(new ApiResponse(200, responseData, "videos sent",true));
 });
 
 const searchApi = asyncHandler(async (req, res) => {
@@ -555,6 +558,7 @@ const searchedVideos = asyncHandler(async (req, res) => {
         thumbnail: 1,
         avatar: "$videoCreaters.avatar",
         username: "$videoCreaters.username",
+        videoURL:1
       },
     },
   ]);
@@ -567,7 +571,7 @@ export {
   getnewVideos,
   verifyVideo,
   uploadVideo,
-  getMyVideos,
+  getUserVideos,
   deleteMyVideo,
   playingVideoData,
   getAllVideos,

@@ -7,7 +7,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../protection/useAuth";
 
 function Subscription() {
-
   const { currUser } = useAuth();
   const dispatch = useDispatch();
   console.log(currUser._id);
@@ -16,7 +15,7 @@ function Subscription() {
     let resp = await axios.get(
       `/api/subscription/subscribedChannels/${currUser._id}`
     );
-    return resp.data.data
+    return resp.data.data;
   }
 
   const { data, isLoading, error } = useQuery({
@@ -26,11 +25,10 @@ function Subscription() {
   });
   console.log(data);
 
-
   const navigate = useNavigate();
 
   async function unSubscribe(id) {
-    let resp = await axios.post("/api/subscription/unSubscribe", {
+      await axios.post("/api/subscription/unSubscribe", {
       subscriber: currUser._id,
       subscribedTo: id,
     });
@@ -41,7 +39,14 @@ function Subscription() {
       let resp = await axios.get(`/api/user/getChannel/${id}`);
       if (resp) {
         dispatch(setChannel(resp.data.data));
-        navigate("../followedPage");
+        let obj = data.find((obj) => obj.Channel._id === id);
+        let Channel = obj?.Channel;
+        const avatar = Channel.avatar ||  "/src/assets/defaultAvatar.png";
+        navigate(
+          `../followedPage/${encodeURIComponent(Channel._id)}/${encodeURIComponent(Channel.username)}/${encodeURIComponent(Channel.email)}/${encodeURIComponent(avatar)}/${encodeURIComponent(Channel.subscribersCount)}`
+        );
+        
+        ;
       }
     } catch (error) {
       console.log(error);
@@ -85,43 +90,43 @@ function Subscription() {
           Subscribed Channels
         </h5>
       </div>
-     
-        <ul role="list" className="divide-y divide-gray-700 px-5 py-2">
-          {data.map((card) => (
-            <li
-              key={card._id}
-              className="py-3 sm:py-4 hover:bg-white  hover:bg-opacity-5 rounded-md px-2 cursor-pointer"
-              onClick={() => navigateToSUbscribedChannel(card.Channel._id)}
-            >
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <img
-                    className="w-10 h-10 rounded-full object-cover"
-                    src={card.Channel.avatar || "/src/assets/defaultAvatar.png"}
-                    alt="image"
-                  />
-                </div>
-                <div className="flex-1 min-w-0 ms-4">
-                  <p className="text-lg font-medium truncate text-white">
-                    {card.Channel.username}
-                  </p>
-                  <p className="text-sm  truncate text-gray-300">
-                    {card.Channel.email}
-                  </p>
-                </div>
-                <button
-                  className="text-white bg-red-600 rounded-full p-2 font-bold hover:bg-red-700"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    unSubscribe(card.Channel._id);
-                  }}
-                >
-                  UnSubscribe
-                </button>
+
+      <ul role="list" className="divide-y divide-gray-700 px-5 py-2">
+        {data.map((card) => (
+          <li
+            key={card._id}
+            className="py-3 sm:py-4 hover:bg-white  hover:bg-opacity-5 rounded-md px-2 cursor-pointer"
+            onClick={() => navigateToSUbscribedChannel(card.Channel._id)}
+          >
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <img
+                  className="w-10 h-10 rounded-full object-cover"
+                  src={card.Channel.avatar || "/src/assets/defaultAvatar.png"}
+                  alt="image"
+                />
               </div>
-            </li>
-          ))}
-        </ul>
+              <div className="flex-1 min-w-0 ms-4">
+                <p className="text-lg font-medium truncate text-white">
+                  {card.Channel.username}
+                </p>
+                <p className="text-sm  truncate text-gray-300">
+                  {card.Channel.email}
+                </p>
+              </div>
+              <button
+                className="text-white bg-red-600 rounded-full p-2 font-bold hover:bg-red-700"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  unSubscribe(card.Channel._id);
+                }}
+              >
+                UnSubscribe
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

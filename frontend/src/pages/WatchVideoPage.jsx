@@ -2,11 +2,14 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 import WatchPageSideVideos from "../components/watchPageSideVideos";
-import TryPlaylistBox from "../components/dummy";
+import PlaylistBox from "../components/playListManagerBox";
 import VideoSection from "../components/videoSection";
+import { useAuth } from "../protection/useAuth";
+import axios from "axios";
 
 function WatchVideoPage() {
   const currVideo = useSelector((state) => state.currentVideo);
+  const {currUser}=useAuth()
   const { _private: playlist } = useSelector((state) => state.playlist);
   const [openPlayListCard, setOpenplaylistCard] = useState(false);
   const [playlistVideos,setPlaylistVideos]=useState([])
@@ -14,6 +17,28 @@ function WatchVideoPage() {
   let isInPlaylist = playlist?.some((playlist) =>
     playlist?.videos.includes(currVideo._id)
   );
+
+ async function addVideoToWatchHistory(){
+  try {
+    await axios.post("/api/watchHistory/addVideoToWatchHistory",{
+      userId:currUser._id,
+      videoId:currVideo._id
+    })
+  } catch (error) {
+    console.log(error)
+  }
+  
+ }
+
+  useEffect(() => {
+    if (!currVideo?._id) return;
+
+    const timer = setTimeout(() => {
+      addVideoToWatchHistory()
+    }, 3000); 
+
+    return () => clearTimeout(timer); 
+  }, [currVideo]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -32,7 +57,7 @@ function WatchVideoPage() {
 
         <WatchPageSideVideos  setPlaylistVideos={setPlaylistVideos} />
 
-        <TryPlaylistBox
+        <PlaylistBox
           openPlayListCard={openPlayListCard}
           setOpenPlayListCard={setOpenplaylistCard}
           videoId={currVideo._id}

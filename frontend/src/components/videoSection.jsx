@@ -67,8 +67,6 @@ function VideoSection({ currVideo , setOpenplaylistCard , isInPlaylist , playlis
   }
 
   async function handleVideoEnd(){
-    console.log("3rd")
-    console.log(playlistVideos)
     let currVideoIndex=playlistVideos.findIndex(video => video._id === currVideo._id)
     if(currVideoIndex==playlistVideos.length-1) return 
     let nextVideoId=playlistVideos[currVideoIndex+1]._id

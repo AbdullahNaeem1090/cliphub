@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
-  addToWatchHistory,
   setCurrentVideo,
 } from "../../slices/currentVideoSlice";
 import { setPlaylistVideos } from "../../slices/playistVideosSlice";
@@ -29,7 +28,6 @@ function MyPlaylist() {
         `/api/playlist/playlistVideos/${playlists[index]._id}`
       );
       dispatch(setCurrentVideo(resp.data.data));
-      dispatch(addToWatchHistory(resp.data.data._id));
       dispatch(setPlaylistVideos(resp1.data.data));
       navigate("../../playlist");
     } catch (error) {

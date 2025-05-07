@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { upload } from "../middlewares/multer.js";
-import {auth} from "../middlewares/auth.js"
-import { verifyVideo,uploadVideo,getMyVideos,deleteMyVideo,playingVideoData,getAllVideos, searchApi, searchedVideos,deleteGarbageVideos,getnewVideos, getPlayingVideoData} from "../controllers/video.controller.js";
+import { verifyVideo,uploadVideo,getUserVideos,deleteMyVideo,playingVideoData,getAllVideos, searchApi, searchedVideos,deleteGarbageVideos,getnewVideos, getPlayingVideoData} from "../controllers/video.controller.js";
 
 const vidRouter = Router()
 
@@ -16,7 +15,7 @@ vidRouter.route("/uploadVideo").post(upload.fields([
         }
     ]),uploadVideo)
 
-vidRouter.route("/myVideos").get(auth,getMyVideos)   
+vidRouter.route("/userVideos/:userId").get(getUserVideos)   
 vidRouter.route("/delVideo/:videoId").delete(deleteMyVideo)   
 vidRouter.route("/search/:query").get(searchApi)   
 vidRouter.route("/searchVideos/:query").get(searchedVideos)   

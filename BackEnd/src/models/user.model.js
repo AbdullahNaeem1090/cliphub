@@ -18,11 +18,6 @@ const userSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    watchHistory: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "videos",
-        default: []
-    }],
     avatar:{
         type:String,
     },
