@@ -1,14 +1,11 @@
 // import { useState } from "react";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setChannel } from "../slices/followedChannel";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../protection/useAuth";
 
 function Subscription() {
   const { currUser } = useAuth();
-  const dispatch = useDispatch();
   console.log(currUser._id);
 
   async function getSubscribedChannels() {
@@ -36,18 +33,12 @@ function Subscription() {
 
   async function navigateToSUbscribedChannel(id) {
     try {
-      let resp = await axios.get(`/api/user/getChannel/${id}`);
-      if (resp) {
-        dispatch(setChannel(resp.data.data));
         let obj = data.find((obj) => obj.Channel._id === id);
         let Channel = obj?.Channel;
         const avatar = Channel.avatar ||  "/src/assets/defaultAvatar.png";
         navigate(
           `../followedPage/${encodeURIComponent(Channel._id)}/${encodeURIComponent(Channel.username)}/${encodeURIComponent(Channel.email)}/${encodeURIComponent(avatar)}/${encodeURIComponent(Channel.subscribersCount)}`
         );
-        
-        ;
-      }
     } catch (error) {
       console.log(error);
     }

@@ -55,7 +55,7 @@ const uploadVideo = asyncHandler(async (req, res) => {
   const creatingVideoDoc = await videoModel.create({
     videoURL: videoUploaded.url,
     thumbnail: picUploaded.url,
-    duration:videoUploaded.duration,
+    duration: videoUploaded.duration,
     owner,
     title,
     description: description || "",
@@ -138,7 +138,7 @@ const deleteGarbageVideos = asyncHandler(async (req, res) => {
 });
 
 const getUserVideos = asyncHandler(async (req, res) => {
-  const {userId}=req.params
+  const { userId } = req.params;
 
   if (!userId) {
     return res.status(400).json({ message: "Id missing" });
@@ -153,14 +153,23 @@ const getUserVideos = asyncHandler(async (req, res) => {
   return res.json(
     new ApiResponse(200, myVideos, "Myvideos retrieval successfull", true)
   );
-  
 });
 
 const deleteMyVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
+
   if (!videoId) {
     res.json({ error: "Video Id mising" });
   }
+
+  const video = await videoModel.findById(videoId);
+
+  let pic = get_PublicId_From_URL(video?.thumbnail);
+  let videoUrl = get_PublicId_From_URL(video?.videoURL);
+
+  await deletefromCloudinary([pic], "image");
+  await deletefromCloudinary([videoUrl], "video");
+
   const deleted = await videoModel.deleteOne({ _id: videoId });
   const updatePlaylists = await playlistModel.updateMany(
     { videos: videoId },
@@ -487,7 +496,7 @@ const getnewVideos = asyncHandler(async (req, res) => {
         thumbnail: 1,
         avatar: "$videoCreaters.avatar",
         username: "$videoCreaters.username",
-        videoURL:1
+        videoURL: 1,
       },
     },
   ]);
@@ -498,7 +507,7 @@ const getnewVideos = asyncHandler(async (req, res) => {
     data: videoSet,
     nextCursor: nextCursorId,
   };
-  return res.json(new ApiResponse(200, responseData, "videos sent",true));
+  return res.json(new ApiResponse(200, responseData, "videos sent", true));
 });
 
 const searchApi = asyncHandler(async (req, res) => {
@@ -558,13 +567,47 @@ const searchedVideos = asyncHandler(async (req, res) => {
         thumbnail: 1,
         avatar: "$videoCreaters.avatar",
         username: "$videoCreaters.username",
-        videoURL:1
+        videoURL: 1,
       },
     },
   ]);
 
   return res.json(new ApiResponse(200, matchedVideos, "sent"));
 });
+
+const editVideo = async (req, res) => {
+  try {
+    const updateFields = {};
+    console.log(req.file.path);
+
+    if (req.body.title) updateFields.title = req.body.title;
+    if (req.body.description) updateFields.description = req.body.description;
+
+    if (req.file) {
+      const video = await videoModel.findById(req.params.id);
+      if (video?.thumbnail) {
+        await deletefromCloudinary([get_PublicId_From_URL(video.thumbnail)], "image");
+      }
+
+      console.log(req.file.path);
+      const picUploaded = await uploadOnCloudinary(req.file.path);
+      updateFields.thumbnail = picUploaded.url
+    }
+
+    const updatedVideo = await videoModel.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateFields },
+      { new: true }
+    );
+
+    if (!updatedVideo)
+      return res.status(404).json({ message: "Video not found" });
+
+    return res.json(new ApiResponse(200, updatedVideo, "Video updated", true));
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
 
 export {
   getPlayingVideoData,
@@ -578,4 +621,5 @@ export {
   searchApi,
   searchedVideos,
   deleteGarbageVideos,
+  editVideo,
 };

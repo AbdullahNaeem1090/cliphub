@@ -26,7 +26,6 @@ function WatchVideoPage() {
     } catch (error) {
       console.log(error)
     }
-    
    }
   
     useEffect(() => {

@@ -35,6 +35,7 @@ function PlaylistSideVideos({setPlaylistVideos}) {
   }, [data,setPlaylistVideos]);
 
   let fetchedVideos = data?.playlistVideos||[]
+  console.log(fetchedVideos)
 
 
   const dispatch = useDispatch();

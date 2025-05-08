@@ -239,49 +239,6 @@ const getUserChannelDetails = asyncHandler(async (req, res) => {
     },
     {
       $lookup: {
-        from: "videos",
-        localField: "_id",
-        foreignField: "owner",
-        as: "videos",
-        pipeline: [
-          {
-            $project: {
-              title: 1,
-              thumbnail: 1,
-              _id: 1,
-            },
-          },
-        ],
-      },
-    },
-    {
-      $lookup: {
-        from: "playlists",
-        let: { id: "$_id" },
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $and: [
-                  { $eq: ["$owner", "$$id"] },
-                  { $eq: ["$category", "public"] },
-                ],
-              },
-            },
-          },
-          {
-            $project: {
-              _id: 1,
-              videos: 1,
-              title: 1,
-            },
-          },
-        ],
-        as: "playlists",
-      },
-    },
-    {
-      $lookup: {
         from: "subscriptions",
         localField: "_id",
         foreignField: "subscribedTo",
@@ -294,14 +251,12 @@ const getUserChannelDetails = asyncHandler(async (req, res) => {
         username: 1,
         email: 1,
         avatar: 1,
-        videos: 1,
-        playlists: 1,
-        subscribers: { $size: "$subscribers" },
+        subscribersCount: { $size: "$subscribers" },
       },
     },
   ]);
 
-  return res.json(new ApiResponse(200, channelDetails, "done"));
+  return res.json(new ApiResponse(200, channelDetails, "done",true));
 });
 
 const addToWatchHistory = asyncHandler(async (req, res) => {

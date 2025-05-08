@@ -1,28 +1,25 @@
 import { useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setTempVideoArray } from "../../slices/myVideoSlice";
 import { useNavigate } from "react-router-dom";
-import { removeVideoFromHomePage } from "../../slices/allVideosSlice";
 import { useAuth } from "../../protection/useAuth";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import PlaylistBox from "../../components/playListManagerBox";
-import { remVideofromPlaylist } from "../../slices/playlistSlice";
 import { setCurrentVideo } from "../../slices/currentVideoSlice";
 import VideoBox from "../../components/videoBox";
+import { CustomToast } from "../../utils/showUtils";
+import EditForm from "../../components/editForm";
 
 function MyVideos() {
+  const queryClient = useQueryClient();
   const { currUser } = useAuth();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [openDropdownId, setOpenDropdownId] = useState(null);
   const [openPlayListCard, setOpenPlayListCard] = useState(false); //2
   const [videoId, setVideoId] = useState(""); //2
+  const [editVideoId, setEditVideoId] = useState(""); //2
   const [dropDownId, setDropDownId] = useState(""); //2
-
-  const toggleDropdown = (id) => {
-    setOpenDropdownId(openDropdownId === id ? null : id);
-  };
+  let [showForm, setShowForm] = useState(false);
 
   const playlists = useSelector((state) => state.playlist);
   const playlist = [...playlists._public, ...playlists._hidden];
@@ -36,33 +33,37 @@ function MyVideos() {
     }
   }
 
+  const deleteItem = async (videoId) => {
+    let resp = await axios.delete(`/api/video/delVideo/${videoId}`);
+    return resp.data.data;
+  };
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["userVideos"],
     queryFn: getMyVideos,
     refetchOnWindowFocus: false,
   });
 
-  async function handleDelete(videoId) {
-    try {
-      console.log(videoId);
-      let resp = await axios.delete(`/api/video/delVideo/${videoId}`);
-      if (resp.data.success) {
-        let tempVideoArray = data.filter((video) => {
-          return video._id !== videoId;
-        });
-        dispatch(setTempVideoArray(tempVideoArray));
-        dispatch(removeVideoFromHomePage(videoId));
-        dispatch(
-          remVideofromPlaylist({
-            category: "both",
-            videoId: videoId,
-          })
-        );
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  const { mutate } = useMutation({
+    mutationFn: deleteItem,
+    onMutate: async (videoId) => {
+      await queryClient.cancelQueries(["userVideos"]);
+
+      const previousVideos = queryClient.getQueryData(["userVideos"]);
+
+      queryClient.setQueryData(["userVideos"], (old) =>
+        old.filter((v) => v._id !== videoId)
+      );
+      CustomToast(dispatch, "Deleted");
+      return { previousVideos };
+    },
+    onError: (err, videoId, context) => {
+      queryClient.setQueryData(["userVideos"], context.previousVideos);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(["userVideos"]);
+    },
+  });
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Something went wrong</p>;
@@ -92,9 +93,7 @@ function MyVideos() {
         {data.map((video) => (
           <VideoBox
             key={video._id}
-            navigateToVideoPage={() =>
-              navigateToVideoPage(video._id, currUser._id)
-            }
+            navigateToVideoPage={() =>navigateToVideoPage(video._id, currUser._id)}
             video={video}
             channelName={currUser.username}
             avatar={currUser.avatar}
@@ -102,6 +101,10 @@ function MyVideos() {
             setDropDownId={setDropDownId}
             setVideoId={setVideoId}
             setOpenPlayListCard={setOpenPlayListCard}
+            actions={["Basic", "ChannelCtrl"]}
+            deleteVideo={() => mutate(video._id)}
+            setShowForm={() => setShowForm(true)}
+            setEditVideoId={() => setEditVideoId(video._id)}
           />
         ))}
 
@@ -111,6 +114,12 @@ function MyVideos() {
           videoId={videoId}
           playlist={playlist}
           createPlaylistOption={false}
+        />
+
+        <EditForm
+          showForm={showForm}
+          setShowForm={setShowForm}
+          editVideoId={editVideoId}
         />
       </div>
     </>

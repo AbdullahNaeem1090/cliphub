@@ -22,6 +22,7 @@ function HomePage() {
   const { ref, inView } = useInView();
   const { currUser } = useAuth();
   const { _private: playlist } = useSelector((state) => state.playlist);
+  console.log(playlist)
 
   let [dropDownId, setDropDownId] = useState("");
   let [openPlayListCard, setOpenPlayListCard] = useState(false);
@@ -80,6 +81,8 @@ function HomePage() {
               setDropDownId={setDropDownId}
               setVideoId={setVideoId}
               setOpenPlayListCard={setOpenPlayListCard}
+            actions={["Basic"]}
+
             />
           ))}
         </div>

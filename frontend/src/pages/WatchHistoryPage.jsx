@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-import { removeVideoFromHistory } from "../slices/watchHistorySlice";
 import { setCurrentVideo } from "../slices/currentVideoSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -17,20 +16,21 @@ function WatchHistory() {
   const [videoId, setVideoId] = useState(""); //2
   const [dropDownId, setDropDownId] = useState(""); //2
   const { _private: playlist } = useSelector((state) => state.playlist);
-
+  console.log(playlist);
 
   async function removeFromHistory(id) {
-    console.log(id)
-    let resp = await axios.delete(`/api/watchHistory/deleteVideoFromHistory/${id}`);
+    console.log(id);
+    let resp = await axios.delete(
+      `/api/watchHistory/deleteVideoFromHistory/${id}`
+    );
     if (resp.data.success) {
-        setHistory(prev => prev.filter(video => video._id !== id));
-
+      setHistory((prev) => prev.filter((video) => video._id !== id));
     }
   }
   async function clearHistory() {
     let resp = await axios.delete(`/api/watchHistory/clear/${currUser._id}`);
     if (resp.data.success) {
-        setHistory([])
+      setHistory([]);
     }
   }
 
@@ -96,16 +96,17 @@ function WatchHistory() {
             setVideoId={setVideoId}
             setOpenPlayListCard={setOpenPlayListCard}
             removeFromHistory={removeFromHistory}
+            actions={["Basic","History"]}
           />
         ))}
       </div>
       <PlaylistBox
-                    openPlayListCard={openPlayListCard}
-                    setOpenPlayListCard={setOpenPlayListCard}
-                    videoId={videoId}
-                    playlist={playlist}
-                    createPlaylistOption={true}
-                  />
+        openPlayListCard={openPlayListCard}
+        setOpenPlayListCard={setOpenPlayListCard}
+        videoId={videoId}
+        playlist={playlist}
+        createPlaylistOption={true}
+      />
     </div>
   );
 }

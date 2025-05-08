@@ -14,7 +14,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
-import SearchResultVideosPage from "./components/searchResult.jsx";
+import SearchResultVideosPage from "./pages/searchedResultedVideos.jsx";
 import { store, persistor } from "./store/store.js";
 import WatchVideoPage from "./pages/WatchVideoPage.jsx";
 import WatchPlaylistPage from "./pages/watchPlaylistPage.jsx";
@@ -35,7 +35,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppLayout from "./layout/Applayout.jsx";
 import PersonalPlaylists from "./pages/PersonalPlaylists.jsx";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 const router = createBrowserRouter(
   createRoutesFromElements(

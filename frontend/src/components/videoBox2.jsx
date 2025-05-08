@@ -11,7 +11,8 @@ function VideoBox2({
   setDropDownId,
   setVideoId,
   setOpenPlayListCard,
-  removeFromHistory
+  removeFromHistory,
+  actions,
 }) {
   const dispatch = useDispatch();
 
@@ -70,55 +71,65 @@ function VideoBox2({
             />
 
             {/* drop down */}
-            
+
             {dropDownId === video._id && (
               <div className="absolute right-7 mt-2 z-10  divide-y divide-gray-100 rounded-lg shadow w-44 bg-black ">
                 <ul className="py-2 text-sm  text-gray-200">
-                  <li>
-                    <button
-                      onClick={(e) => {
-                        copyLink(video?.videoURL);
-                        e.stopPropagation();
-                      }}
-                      className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
-                    >
-                      Copy Link
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setVideoId(video?._id);
-                        setOpenPlayListCard(true);
-                        setDropDownId("");
-                      }}
-                      className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
-                    >
-                      Add to playlist
-                    </button>
-                  </li>
-                  <li>
-                    <button className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white">
-                      Delete
-                    </button>
-                  </li>
-                  <li>
-                    <button className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white">
-                      Edit
-                    </button>
-                  </li>
-                  <li>
-                  <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    removeFromHistory(video._id)
-                  }}
-                    className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
-                  >
-                    Remove from History
-                  </button>
-                </li>
+                  {actions.includes("Basic") && (
+                    <>
+                      <li>
+                        <button
+                          onClick={(e) => {
+                            copyLink(video?.videoURL);
+                            e.stopPropagation();
+                          }}
+                          className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
+                        >
+                          Copy Link
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setVideoId(video?.videoId||video?._id);
+                            setOpenPlayListCard(true);
+                            setDropDownId("");
+                          }}
+                          className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
+                        >
+                          Add to playlist
+                        </button>
+                      </li>
+                    </>
+                  )}
+                  {actions.includes("ChannelCtrl") && (
+                    <>
+                      <li>
+                        <button className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white">
+                          Delete
+                        </button>
+                      </li>
+                      <li>
+                        <button className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white">
+                          Edit
+                        </button>
+                      </li>
+                    </>
+                  )}
+                  {actions.includes("History") && (
+                    <li>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeFromHistory(video._id);
+                        }}
+                        className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
+                      >
+                        Remove from History
+                      </button>
+                    </li>
+                  )}
                 </ul>
               </div>
             )}
@@ -140,4 +151,5 @@ VideoBox2.propTypes = {
   setVideoId: PropTypes.func,
   setOpenPlayListCard: PropTypes.func,
   removeFromHistory: PropTypes.func,
+  actions: PropTypes.array,
 };

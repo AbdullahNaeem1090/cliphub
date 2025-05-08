@@ -3,6 +3,8 @@ import { useAuth } from "../protection/useAuth";
 import axios from "axios";
 import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
+import { setCurrentVideo } from "../slices/currentVideoSlice";
+import { useDispatch } from "react-redux";
 
 function Header({ setShowSideBar, setResult }) {
 
@@ -10,6 +12,7 @@ function Header({ setShowSideBar, setResult }) {
   const [suggestions, setSuggestion] = useState([]);
   const [showSearchBar, setShowSearchBar] = useState(false);
   const navigate = useNavigate();
+  const dispatch=useDispatch()
 
   const { currUser } = useAuth();
   let { avatar } = currUser;
@@ -18,6 +21,7 @@ function Header({ setShowSideBar, setResult }) {
     const query = inpRef?.current?.value;
     let resp = await axios.get(`/api/video/searchVideos/${query}`);
     if (resp) {
+      console.log(resp.data.data)
       setResult(resp.data.data);
       setSuggestion([]);
       setShowSearchBar(false);
@@ -41,18 +45,21 @@ function Header({ setShowSideBar, setResult }) {
 
   async function handleClick(suggestion) {
     if (suggestion?.title) {
-      let resp = await axios.get(`/api/video/playVideo/${suggestion._id}`);
-      if (resp) {
-        //   dispatch(setCurrentVideo(resp.data.data));
-        //   dispatch(addToWatchHistory(suggestion._id));
+      let resp = await axios.get(`/api/video/getPlayingVideoData/${suggestion._id}/${currUser._id}`);
+      if (resp.data.success) {
+        dispatch(setCurrentVideo(resp.data.data))
         navigate("/main/wvp");
         setSuggestion([]);
       }
     } else if (suggestion?.username) {
       let resp = await axios.get(`/api/user/getChannel/${suggestion._id}`);
-      if (resp) {
-        //   dispatch(setChannel(resp.data.data));
-        navigate("/main/followedPage");
+      if (resp.data.success) {
+        console.log(resp.data.data)
+        let Channel=resp.data?.data[0]
+        const avatar = Channel.avatar ||  "/src/assets/defaultAvatar.png"
+        navigate(
+          `/main/followedPage/${encodeURIComponent(Channel._id)}/${encodeURIComponent(Channel.username)}/${encodeURIComponent(Channel.email)}/${encodeURIComponent(avatar)}/${encodeURIComponent(Channel.subscribersCount)}`
+        );
         setSuggestion([]);
       }
     }
@@ -94,7 +101,7 @@ function Header({ setShowSideBar, setResult }) {
                   Search
                 </button>
               </div>
-              <ul className="w-[80%] fixed text-sm font-medium right-1/5 top-16 border  rounded-3xl bg-gray-700 border-gray-600 text-white">
+              <ul className="w-[80%] fixed text-sm font-medium right-1/5 top-16 border  rounded-3xl bg-black border-gray-600 text-white">
                 {suggestions.map((suggestion) => (
                   <li
                     key={suggestion._id}
@@ -142,7 +149,7 @@ function Header({ setShowSideBar, setResult }) {
                   onChange={handleInputChange}
                   onKeyDown={handleKeyEnter}
                   className="block w-full p-4 ps-10 text-sm text-white  rounded-full focus:border-blue-700 bg-black opacity-80 border-slate-700"
-                  placeholder="Search . . . "
+                  placeholder="Search"
                 />
                 <button
                   onClick={navigateToSuggestedVideos}
@@ -151,12 +158,12 @@ function Header({ setShowSideBar, setResult }) {
                   Search
                 </button>
               </div>
-              <ul className="w-1/3 fixed text-sm font-medium right-1/5 top-16 border  rounded-xl bg-gray-700 border-gray-600 text-white ">
+              <ul className="w-1/3 fixed text-sm font-medium right-1/5 top-16   rounded-xl bg-black  text-white ">
                 {suggestions.map((suggestion) => (
                   <li
                     key={suggestion._id}
                     onClick={() => handleClick(suggestion)}
-                    className="w-full px-4 py-2 hover:bg-slate-600 rounded-lg border-gray-600 "
+                    className="w-full px-4 py-2 hover:bg-slate-800 rounded-lg border-gray-600 "
                   >
                     {suggestion?.title || suggestion?.username}
                   </li>

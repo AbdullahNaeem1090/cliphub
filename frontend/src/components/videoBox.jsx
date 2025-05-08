@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import { CustomToast } from "../utils/showUtils.js";
 
-
 function VideoBox({
   navigateToVideoPage,
   video,
@@ -11,25 +10,26 @@ function VideoBox({
   dropDownId,
   setDropDownId,
   setVideoId,
-  setOpenPlayListCard
+  setOpenPlayListCard,
+  deleteVideo,
+  setShowForm,
+  setEditVideoId,
+  actions,
 }) {
-
-  const dispatch=useDispatch()
-
-function copyLink(videoLink){
-
-  navigator.clipboard.writeText(videoLink)
-  .then(() => {
-    CustomToast(dispatch,"Copied ✅")
-    setDropDownId("")
-  })
-  .catch(() => {
-    CustomToast(dispatch,"Copy Failed ✖️")
-  });
-}
- 
+  const dispatch = useDispatch();
 
 
+  function copyLink(videoLink) {
+    navigator.clipboard
+      .writeText(videoLink)
+      .then(() => {
+        CustomToast(dispatch, "Copied ✅");
+        setDropDownId("");
+      })
+      .catch(() => {
+        CustomToast(dispatch, "Copy Failed ✖️");
+      });
+  }
 
   return (
     <div key={video._id} onClick={navigateToVideoPage}>
@@ -70,46 +70,61 @@ function copyLink(videoLink){
           {dropDownId === video._id && (
             <div className="absolute right-7 mt-2 z-10  divide-y divide-gray-100 rounded-lg shadow w-44 bg-black ">
               <ul className="py-2 text-sm  text-gray-200">
-                <li>
-                  <button
-                    onClick={(e) => {
-                      copyLink(video?.videoURL)
-                      e.stopPropagation();
-                    }}
-                    className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
-                  >
-                    Copy Link
-                  </button>
-                </li>
-                <li>
-                  <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setVideoId(video?._id)
-                    setOpenPlayListCard(true)
-                    setDropDownId("")
-                  }}
-                    className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
-                  >
-                    Add to playlist
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
-                  >
-                    Delete
-                  </button>
-                </li>
-                <li>
-                  <button
-                    className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
-                  >
-                    Edit
-                  </button>
-                </li>
-                
-                
+                {actions.includes("Basic") && (
+                  <>
+                    <li>
+                      <button
+                        onClick={(e) => {
+                          copyLink(video?.videoURL);
+                          e.stopPropagation();
+                        }}
+                        className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
+                      >
+                        Copy Link
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setVideoId(video?._id);
+                          setOpenPlayListCard(true);
+                          setDropDownId("");
+                        }}
+                        className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
+                      >
+                        Add to playlist
+                      </button>
+                    </li>
+                  </>
+                )}
+                {actions.includes("ChannelCtrl") && (
+                  <>
+                    <li>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteVideo();
+                        }}
+                        className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white"
+                      >
+                        Delete
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditVideoId()
+                        setShowForm();
+                        setDropDownId("");
+                      }}
+                      className="block px-4 py-2 w-full text-left hover:bg-white hover:bg-opacity-5 hover:text-white">
+                        Edit
+                      </button>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
           )}
@@ -130,5 +145,8 @@ VideoBox.propTypes = {
   setDropDownId: PropTypes.func,
   setVideoId: PropTypes.func,
   setOpenPlayListCard: PropTypes.func,
-  
+  actions: PropTypes.array,
+  deleteVideo: PropTypes.func,
+  setShowForm: PropTypes.func,
+  setEditVideoId: PropTypes.func,
 };

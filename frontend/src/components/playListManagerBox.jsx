@@ -10,7 +10,7 @@ import {
   remVideofromPlaylist,
 } from "../slices/playlistSlice";
 
-function TryPlaylistBox({
+function PlaylistBox({
   openPlayListCard,
   setOpenPlayListCard,
   videoId,
@@ -51,6 +51,7 @@ function TryPlaylistBox({
   }
 
   async function updatePlaylist(add, playlistId, category, videoId) {
+    console.log(playlistId,"this")
     try {
       let resp;
       if (add) {
@@ -180,7 +181,7 @@ function TryPlaylistBox({
   );
 }
 
-TryPlaylistBox.propTypes = {
+PlaylistBox.propTypes = {
   openPlayListCard: PropTypes.bool,
   setOpenPlayListCard: PropTypes.func,
   videoId: PropTypes.string,
@@ -188,4 +189,4 @@ TryPlaylistBox.propTypes = {
   createPlaylistOption: PropTypes.bool,
 };
 
-export default TryPlaylistBox;
+export default PlaylistBox;
