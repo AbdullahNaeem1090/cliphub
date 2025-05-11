@@ -48,6 +48,29 @@ export const playlistSlice = createSlice({
         );
       }
     },
+    renamePlaylist: (state, action) => {
+      const { playlistId, newName, category } = action.payload;
+      let _category = `_${category}`;
+      state[_category].forEach((playlist) => {
+        if (playlist._id === playlistId) {
+          playlist.title = newName;
+        }
+      });
+    },
+changeCategory: (state, action) => {
+  const { playlistId, oldCategory, newCategory } = action.payload;
+  const old_category = `_${oldCategory}`;
+  const new_category = `_${newCategory}`;
+
+  const playlist = state[old_category].find(p => p._id === playlistId);
+  if (!playlist) return;
+  playlist.category = newCategory;
+
+  state[old_category] = state[old_category].filter(p => p._id !== playlistId);
+
+  state[new_category].push(playlist);
+}
+
   },
 });
 
@@ -57,6 +80,8 @@ export const {
   remVideofromPlaylist,
   setPlaylistData,
   deletePlaylist,
+  renamePlaylist,
+  changeCategory,
 } = playlistSlice.actions;
 
 export default playlistSlice.reducer;

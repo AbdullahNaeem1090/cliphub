@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import {
   setCurrentVideo,
 } from "../../slices/currentVideoSlice";
-import { setPlaylistVideos } from "../../slices/playistVideosSlice";
 import { deletePlaylist } from "../../slices/playlistSlice";
 import { useEffect, useMemo, useState } from "react";
 import PlaylistCard from "../../components/playlistCard";
@@ -20,15 +19,16 @@ function MyPlaylist() {
 
   const playlists = useMemo(() => [..._public, ..._hidden], [_public, _hidden]);
 
+  console.log(playlists)
+
   async function navigateToVideoPage(index) {
     let videoId = playlists[index].videos[0];
     try {
       let resp = await axios.get(`/api/video/playVideo/${videoId}`);
-      let resp1 = await axios.get(
-        `/api/playlist/playlistVideos/${playlists[index]._id}`
-      );
+      // let resp1 = await axios.get(
+      //   `/api/playlist/playlistVideos/${playlists[index]._id}`
+      // );
       dispatch(setCurrentVideo(resp.data.data));
-      dispatch(setPlaylistVideos(resp1.data.data));
       navigate("../../playlist");
     } catch (error) {
       console.log(error);

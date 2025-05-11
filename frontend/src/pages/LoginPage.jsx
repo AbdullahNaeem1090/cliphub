@@ -4,11 +4,8 @@ import { loginPageUI, INPUT } from "../UI.js";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setMyVideos } from "../slices/myVideoSlice.js"
 import { useAuth } from "../protection/useAuth.jsx";
-import { setAllVideos } from "../slices/allVideosSlice.js";
-import { setLikedVideos } from '../slices/likeSlice.js';
-import { setSubscribedChannels } from "../slices/subscriptionSlice.js";
+
 import { getUserPlaylists } from "../utils/setCurrVideo&Navigate.js";
 
 export default function LoginPage() {
@@ -18,7 +15,6 @@ export default function LoginPage() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
     const [errMsg, setErrMsg] = useState("");
-    // const [show, setShow] = useState(true);
 
     const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -27,47 +23,6 @@ export default function LoginPage() {
         setTimeout(() => navigate('/signUp'), 300); // Transition duration should match the timeout
     }
 
-    async function getAllVideos() {
-        let resp = await axios.get("/api/video/getVideos");
-        if (resp.data.data) {
-            dispatch(setAllVideos(resp.data.data));
-        }
-    }
-
-    async function getMyVideos() {
-        try {
-            let resp = await axios.get("/api/video/myVideos");
-            if (resp) {
-                dispatch(setMyVideos(resp.data.data));
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    async function getMyPlaylists() {
-        try {
-            let res = await axios.get("/api/playlist/getPlaylists");
-            if (res.data.statusCode === 200) {
-                dispatch(initializePlaylist(res.data.data));
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    async function getLikesAndSubscribedChannels(id) {
-        try {
-            let resp1 = await axios.get(`/api/like/getLikes/${id}`);
-            let resp2 = await axios.get(`/api/subscription/subscribedChannels/${id}`);
-            if (resp1 && resp2) {
-                dispatch(setLikedVideos(resp1.data.data));
-                dispatch(setSubscribedChannels(resp2.data.data));
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
 
     async function onsubmit(logInData) {
         try {
@@ -79,10 +34,7 @@ export default function LoginPage() {
                 setErrMsg("");
                 await getUserPlaylists(dispatch,response.data.data?._id)
     
-                await getAllVideos();
-                await getMyPlaylists();
-                await getMyVideos();
-                await getLikesAndSubscribedChannels(response.data.data._id);
+                
                 setTimeout(() => navigate("/main"), 300);
             }
         } catch (error) {

@@ -103,48 +103,7 @@ export const currentVideoSlice = createSlice({
         return comment
       })
     },
-    addTempComment: (state, action) => {
-      state.Comments.unshift(action.payload);
-    },
-    remTempComment: (state, action) => {
-      state.currentVideo[0].comments.splice(action.payload, 1);
-    },
-    addTempReply: (state, action) => {
-      state.currentVideo[0].reply_array[action.payload.index].replies.push(
-        action.payload.replyObj
-      );
-    },
-    remTempReply: (state, action) => {
-      state.currentVideo[0].reply_array.splice(action.payload, 1);
-    },
-    manageTempSubscriber: (state, action) => {
-      if (action.payload === 1) {
-        state.currentVideo[0].subscribersCount++;
-      } else {
-        state.currentVideo[0].subscribersCount--;
-      }
-    },
-    manageTempLikes: (state, action) => {
-      if (action.payload === 1) {
-        state.currentVideo[0].likes_count++;
-      } else {
-        state.currentVideo[0].likes_count--;
-      }
-    },
-    addTempPlaylistId: (state, action) => {
-      console.log(state.currentVideo[0], "before");
-      state.currentVideo[0].playListMember.push(action.payload);
-    },
-    memberRemoval: (state, action) => {
-      state.currentVideo = [
-        {
-          ...state.currentVideo[0],
-          playListMember: state.currentVideo[0].playListMember.filter(
-            (id) => action.payload !== id
-          ),
-        },
-      ];
-    },
+   
   },
 });
 
@@ -162,14 +121,6 @@ export const {
   addReply,
   addReplies,
   removeReply,
-  addTempReply,
-  manageTempSubscriber,
-  remTempComment,
-  remTempReply,
-  addTempComment,
-  manageTempLikes,
-  addTempPlaylistId,
-  memberRemoval,
 } = currentVideoSlice.actions;
 
 export default currentVideoSlice.reducer;

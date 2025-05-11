@@ -11,10 +11,10 @@ const createPlaylist = asyncHandler(async (req, res) => {
   if ([title, category].some((field) => field == "")) {
     res.status(400).json({ error: "A field is missing" });
   }
-  let video=[]
+  let video = [];
   if (playlistVideo) {
     video = [playlistVideo];
-  } 
+  }
 
   const createdPlaylist = await playlistModel.create({
     owner: req.user._id,
@@ -146,14 +146,19 @@ const getPlaylistVideos = asyncHandler(async (req, res) => {
     {
       $project: {
         _id: 1,
+        videos: 1,
         playlistVideos: 1,
       },
     },
   ]);
 
-  res.json(
-    new ApiResponse(200, playlistVideos[0], "playlist videos sent", true)
+  const ordered = playlistVideos[0].videos.map((id) =>
+    playlistVideos[0].playlistVideos.find(
+      (video) => video._id.toString() === id.toString()
+    )
   );
+
+  res.json(new ApiResponse(200, ordered, "playlist videos sent", true));
 });
 
 const deletePlaylist = asyncHandler(async (req, res) => {
@@ -199,6 +204,80 @@ const getPLThumbnail = asyncHandler(async (req, res) => {
   );
 });
 
+const reOrderVideos = async (req, res) => {
+  const { orderedIds } = req.body;
+  const { id } = req.params;
+
+  try {
+    const updatedPlaylist = await playlistModel.findByIdAndUpdate(
+      id,
+      { videos: orderedIds },
+      { new: true }
+    );
+
+    console.log(updatedPlaylist);
+
+    res.status(200).json({ message: "Playlist order updated" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to reorder videos" });
+  }
+};
+
+const reNamePlaylist = async (req, res) => {
+  console.log("called");
+  const { playlistId, newName } = req.body;
+
+  if (!playlistId || !newName) {
+    return res.status(400).json({ message: "Missing parameters" });
+  }
+
+  try {
+    const playlist = await playlistModel.findById(playlistId);
+
+    if (!playlist) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Playlist not found" });
+    }
+
+    playlist.title = newName;
+    await playlist.save();
+
+    return res.json(new ApiResponse(200, {}, "Renamed Successfully", true));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+const changeCategory = async (req, res) => {
+  const { playlistId } = req.body;
+
+  if (!playlistId) {
+    return res.status(400).json({ message: "Missing parameters" });
+  }
+
+  try {
+    const playlist = await playlistModel.findById(playlistId);
+
+    if (!playlist) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Playlist not found" });
+    }
+if(playlist.category=="public"){
+    playlist.category = "hidden"
+}else{
+    playlist.category = "public"
+}
+    await playlist.save();
+
+    return res.json(new ApiResponse(200, {}, "Category updated Successfully", true));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 export {
   createPlaylist,
   getPlaylists,
@@ -207,4 +286,7 @@ export {
   getPlaylistVideos,
   deletePlaylist,
   getPLThumbnail,
+  reOrderVideos,
+  reNamePlaylist,
+  changeCategory
 };

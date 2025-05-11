@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom/client";
 import LandingPage from "./pages/landingPage.jsx";
-import LoginPage from "./pages/loginPage.jsx";
-import SignUpPage from "./pages/signUp.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+import SignUpPage from "./pages/SignUp.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import Settings from "./pages/SettingsPage.jsx";
 import "./index.css";
@@ -34,6 +34,8 @@ import WatchHistory from "./pages/WatchHistoryPage.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppLayout from "./layout/Applayout.jsx";
 import PersonalPlaylists from "./pages/PersonalPlaylists.jsx";
+import ManagePlaylistPage from "./pages/Account/ManagePlaylistPage.jsx";
+
 
 export const queryClient = new QueryClient();
 
@@ -78,6 +80,7 @@ const router = createBrowserRouter(
           <Route index element={<MyVideosPage />} />
           <Route path="myVideos" element={<MyVideosPage />} />
           <Route path="myPlaylist" element={<MyPlaylistPage />} />
+          <Route path="managePlaylist" element={<ManagePlaylistPage />} />
           <Route path="uploadVideo" element={<UploadVideoPage />} />
         </Route>
       </Route>

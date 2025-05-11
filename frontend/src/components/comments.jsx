@@ -73,6 +73,7 @@ function Comments() {
         author,
       });
       if (resp.data.success) {
+        console.log(resp.data.data)
         dispatch(
           addReply({ commentId: ParentComment_id, reply: resp.data.data })
         );
@@ -256,7 +257,7 @@ function Comments() {
                         {reply.replier?.username}
                       </p>
 
-                      {reply.replier?._id === currUser._id && (
+                      {(reply?.author||reply.replier?._id) === currUser._id && (
                         <img
                           src="/src/assets/delete.png"
                           className="h-6 w-6 cursor-pointer"

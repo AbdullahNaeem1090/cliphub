@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { upload } from "../middlewares/multer.js";
+
 import { auth } from "../middlewares/auth.js";
 
-import {createPlaylist,getPlaylists,addVideoToPlaylist,removeVideoFromPlaylist,getPlaylistVideos,deletePlaylist,getPLThumbnail} from "../controllers/playlist.controller.js";
+import {createPlaylist,getPlaylists,addVideoToPlaylist,removeVideoFromPlaylist,getPlaylistVideos,deletePlaylist,getPLThumbnail, reOrderVideos, reNamePlaylist, changeCategory} from "../controllers/playlist.controller.js";
 
 const playlistRouter = Router()
 
@@ -13,6 +13,9 @@ playlistRouter.route("/removeVideo/:videoId/:playlistId").patch(removeVideoFromP
 playlistRouter.route("/playlistVideos/:playlistId").get(getPlaylistVideos) 
 playlistRouter.route("/getPLThumbnail/:playlistId").get(getPLThumbnail) 
 playlistRouter.route("/deletePlaylist/:playlistId").delete(deletePlaylist) 
+playlistRouter.route("/reOrder/:id").put(reOrderVideos) 
+playlistRouter.route("/reName").put(reNamePlaylist) 
+playlistRouter.route("/changeCategory").put(changeCategory) 
 
 export default playlistRouter
 

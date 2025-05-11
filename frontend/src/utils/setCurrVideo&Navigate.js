@@ -1,6 +1,6 @@
 import axios from "axios";
 import { setCurrentVideo } from "../slices/currentVideoSlice";
-import { _createPlaylist, setPlaylistData } from "../slices/playlistSlice";
+import { setPlaylistData } from "../slices/playlistSlice";
 
 
 

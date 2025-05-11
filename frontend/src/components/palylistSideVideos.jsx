@@ -1,124 +1,117 @@
-import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-
-import { setCurrentVideo } from "../slices/currentVideoSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { setCurrentVideo } from "../slices/currentVideoSlice";
 import { useAuth } from "../protection/useAuth";
-import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import SidebarVideoCard from "./smallVideoBox";
 
-function PlaylistSideVideos({setPlaylistVideos}) {
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
+function PlaylistSideVideos({ setPlaylistVideos }) {
   const { playlistId } = useParams();
   const currVideo = useSelector((state) => state.currentVideo);
-
-  async function getPlaylistVideos() {
-    try {
-      let resp = await axios.get(`/api/playlist/playlistVideos/${playlistId}`);
-      return resp.data.data;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  const { data, isLoading,error } = useQuery({
-    queryKey: ["sidePlaylistVideos"],
-    queryFn: getPlaylistVideos,
-    refetchOnWindowFocus: false,
-  });
-
-  useEffect(() => {
-    if (data) {
-      setPlaylistVideos(data.playlistVideos);
-    }
-  }, [data,setPlaylistVideos]);
-
-  let fetchedVideos = data?.playlistVideos||[]
-  console.log(fetchedVideos)
-
-
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const { currUser } = useAuth();
 
-  async function changeVideo(videoId) {
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  useEffect(() => {
+    const fetchPlaylist = async () => {
+      try {
+        const resp = await axios.get(`/api/playlist/playlistVideos/${playlistId}`);
+        const fetched = resp.data.data
+        console.log(fetched)
+        setVideos(fetched);
+        setPlaylistVideos(fetched);
+      } catch (err) {
+        console.log("Failed to fetch playlist", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlaylist();
+  }, [playlistId, setPlaylistVideos]);
+
+  const changeVideo = async (videoId) => {
     try {
-      let resp = await axios.get(
+      const resp = await axios.get(
         `/api/video/getPlayingVideoData/${videoId}/${currUser._id}`
       );
       dispatch(setCurrentVideo(resp.data.data));
     } catch (error) {
-      console.log(error);
+      console.log("Video change failed", error);
     }
-  }
+  };
 
-  if (isLoading) {
-    return <p>Loading</p>;
-  }
-  if (error) {
-    return <p>Loading</p>;
-  }
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      const oldIndex = videos.findIndex((v) => v._id === active.id);
+      const newIndex = videos.findIndex((v) => v._id === over.id);
+      const reordered = arrayMove(videos, oldIndex, newIndex);
+
+      setVideos(reordered);
+      setPlaylistVideos(reordered);
+
+      try {
+        const orderedIds = reordered.map((v) => v._id);
+        await axios.put(`/api/playlist/reOrder/${playlistId}`, { orderedIds });
+      } catch (error) {
+        console.log("Reorder failed", error);
+      }
+    }
+  };
+
+  if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="flex-1 rounded-lg lg:ml-2 lg:border-l lg:w-[30%]  ">
+    <div className="flex-1 rounded-lg lg:ml-2 lg:border-l lg:w-[30%]">
       <div className="hidden lg:block text-white font-extrabold text-2xl pl-3">
         Playlist Videos
       </div>
-      <div className="lg:h-[1200px] lg:overflow-y-scroll scrollbar-hide lg:border-y mt-3 p-1 ">
-        {fetchedVideos.length &&
-          fetchedVideos.map((video) => (
-            
-            <div
-              key={video._id}
-              className={`flex flex-col max-h-96 md:h-60 lg:h-36 text-white rounded-lg shadow 
-                md:flex-row md:w-[97%] hover:bg-white hover:bg-opacity-10 
-                p-1 mb-2 mx-1 md:mb-0 
-                ${currVideo._id === video._id ? "ring-2 ring-blue-500" : ""}`
-              }
-              
-              onClick={() => changeVideo(video._id)}
-            >
-              <img
-                className="object-cover rounded-lg max-h-60 md:min-w-72 lg:min-w-44"
-                src={video.thumbnail}
-                alt=""
+      <div className="lg:h-[1200px] lg:overflow-y-scroll scrollbar-hide lg:border-y mt-3 p-1">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={videos.map((v) => v._id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {videos.map((video) => (
+              <SidebarVideoCard
+                key={video._id}
+                video={video}
+                currVideoId={currVideo._id}
+                changeVideo={changeVideo}
               />
-
-              <div className="flex md:w-full md:pl-3">
-                <div className="md:hidden h-12 w-12 m-2 rounded-full ">
-                  <img
-                    src={video.thumbnail}
-                    alt=""
-                    className="object cover w-full h-full  rounded-full"
-                  />
-                </div>
-                <div className="flex flex-col pl- pt-1  leading-normal md:w-full">
-                  <p className="mb-1 text-md  tracking-tight text-slate-200  max-h-36  overflow-hidden">
-                    {video.title}
-                  </p>
-                  <div className="md:flex items-center">
-                    <div className="hidden md:block h-6 w-6 m-1 rounded-full">
-                      <img
-                        src={video.avatar || "/src/assets/defaultAvatar.png"}
-                        alt=""
-                        className="object cover w-full h-full rounded-full"
-                      />
-                    </div>
-                    <p className="mb-1 text-slate-300 text-sm">
-                      {video.username}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+            ))}
+          </SortableContext>
+        </DndContext>
       </div>
     </div>
   );
 }
 
 PlaylistSideVideos.propTypes = {
-  setPlaylistVideos: PropTypes.func,
+  setPlaylistVideos: PropTypes.func.isRequired,
 };
 
 export default PlaylistSideVideos;

@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
-import { addVideoToArray } from "../../slices/myVideoSlice";
 import { newComerVideo } from "../../slices/allVideosSlice";
 import axios from "axios";
 import { CustomToast } from "../../utils/showUtils";
@@ -69,7 +68,6 @@ function UploadVideo() {
         clearAllInputs();
         dispatch(finishProgress());
         CustomToast(dispatch, "✅ Video Upladed");
-        dispatch(addVideoToArray(resp.data.data));
         dispatch(
           newComerVideo({
             title: resp.data.data.title,
