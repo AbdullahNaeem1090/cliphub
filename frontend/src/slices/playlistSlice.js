@@ -37,17 +37,17 @@ export const playlistSlice = createSlice({
       });
     },
 
-    deletePlaylist: (state, action) => {
-      if (action.payload.category == "private") {
-        state.privatePlaylists = state.privatePlaylists.filter(
-          (obj) => obj._id !== action.payload.id
-        );
-      } else {
-        state.myplaylists = state.myplaylists.filter(
-          (obj) => obj._id !== action.payload.id
-        );
-      }
-    },
+ removePlaylist: (state, action) => {
+  const { playlistId, category } = action.payload;
+  const categoryKey = `_${category}`; // assuming structure like _public, _hidden, etc.
+
+  if (!state[categoryKey]) return;
+
+  state[categoryKey] = state[categoryKey].filter(
+    (playlist) => playlist._id !== playlistId
+  );
+},
+
     renamePlaylist: (state, action) => {
       const { playlistId, newName, category } = action.payload;
       let _category = `_${category}`;
@@ -57,20 +57,32 @@ export const playlistSlice = createSlice({
         }
       });
     },
-changeCategory: (state, action) => {
-  const { playlistId, oldCategory, newCategory } = action.payload;
-  const old_category = `_${oldCategory}`;
-  const new_category = `_${newCategory}`;
+    changeCategory: (state, action) => {
+      const { playlistId, oldCategory, newCategory } = action.payload;
+      const old_category = `_${oldCategory}`;
+      const new_category = `_${newCategory}`;
 
-  const playlist = state[old_category].find(p => p._id === playlistId);
-  if (!playlist) return;
-  playlist.category = newCategory;
+      const playlist = state[old_category].find((p) => p._id === playlistId);
+      if (!playlist) return;
+      playlist.category = newCategory;
 
-  state[old_category] = state[old_category].filter(p => p._id !== playlistId);
+      state[old_category] = state[old_category].filter(
+        (p) => p._id !== playlistId
+      );
 
-  state[new_category].push(playlist);
-}
+      state[new_category].push(playlist);
+    },
+    removeVideosFromPlaylist: (state, action) => {
+      const { playlistId, category, videoIds } = action.payload;
+      const categoryKey = `_${category}`;
 
+      const playlist = state[categoryKey].find((p) => p._id === playlistId);
+      if (!playlist) return;
+
+      playlist.videos = playlist.videos.filter(
+        (vid) => !videoIds.includes(vid)
+      );
+    },
   },
 });
 
@@ -79,9 +91,10 @@ export const {
   addVideoToPlaylist,
   remVideofromPlaylist,
   setPlaylistData,
-  deletePlaylist,
+  removePlaylist,
   renamePlaylist,
   changeCategory,
+  removeVideosFromPlaylist
 } = playlistSlice.actions;
 
 export default playlistSlice.reducer;

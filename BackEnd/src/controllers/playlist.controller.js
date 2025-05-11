@@ -264,19 +264,56 @@ const changeCategory = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Playlist not found" });
     }
-if(playlist.category=="public"){
-    playlist.category = "hidden"
-}else{
-    playlist.category = "public"
-}
+    if (playlist.category == "public") {
+      playlist.category = "hidden";
+    } else {
+      playlist.category = "public";
+    }
     await playlist.save();
 
-    return res.json(new ApiResponse(200, {}, "Category updated Successfully", true));
+    return res.json(
+      new ApiResponse(200, {}, "Category updated Successfully", true)
+    );
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+const removeVideosFromPlaylist = asyncHandler(async (req, res) => {
+  const { videoIds, playlistId, active } = req.body;
+
+  if (
+    !videoIds ||
+    !Array.isArray(videoIds) ||
+    videoIds.length === 0 ||
+    !playlistId
+  ) {
+    return res.status(400).json({ error: "Missing video IDs or playlist ID" });
+  }
+
+  const updatedPlaylist = await playlistModel.findOneAndUpdate(
+    { _id: playlistId },
+    { $pull: { videos: { $in: videoIds } } }
+  );
+
+  if (!updatedPlaylist) {
+    return res.status(404).json({ error: "Playlist not found" });
+  }
+
+  if (active) {
+    await videoModel.deleteMany({ _id: { $in: videoIds } });
+  }
+
+  return res.json(
+    new ApiResponse(
+      200,
+      {},
+      "Videos removed from playlist" + (active ? " and deleted" : ""),
+      true
+    )
+  );
+});
 
 export {
   createPlaylist,
@@ -288,5 +325,6 @@ export {
   getPLThumbnail,
   reOrderVideos,
   reNamePlaylist,
-  changeCategory
+  changeCategory,
+  removeVideosFromPlaylist,
 };

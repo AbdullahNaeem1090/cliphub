@@ -15,7 +15,13 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import SortableVideoItem from "../../components/draggablePL_VideoBox";
-import { _createPlaylist, changeCategory, renamePlaylist } from "../../slices/playlistSlice";
+import {
+  _createPlaylist,
+  changeCategory,
+  removePlaylist,
+  removeVideosFromPlaylist,
+  renamePlaylist,
+} from "../../slices/playlistSlice";
 
 export default function PlaylistManager() {
   const { _public, _hidden } = useSelector((state) => state.playlist);
@@ -33,13 +39,12 @@ export default function PlaylistManager() {
   );
   const [showConfirmDeletePlaylist, setShowConfirmDeletePlaylist] =
     useState(false);
-  //   const [showConfirmDeleteOption, setShowConfirmDeleteOption] = useState(null);
+
   const [selectAllChecked, setSelectAllChecked] = useState(false);
 
-  // Handle playlist selection
   const handleSelectPlaylist = async (playlist) => {
-    setDisplayLeft(true)
-    setCreatingPlaylist(false)
+    setDisplayLeft(true);
+    setCreatingPlaylist(false);
     setSelectedPlaylist(playlist);
     setNewPlaylistName(playlist.title);
     try {
@@ -59,26 +64,44 @@ export default function PlaylistManager() {
     setSelectAllChecked(false);
   };
 
-  // Handle saving playlist name
-  const handleSavePlaylistName = async() => {
-    if (!newPlaylistName.trim()) return;
-
-    let data={
-        playlistId:selectedPlaylist._id,
-        newName:newPlaylistName,
-        category:selectedPlaylist.category
+  const DeletePlaylist = async () => {
+    try {
+      let resp = await axios.delete(
+        `/api/playlist/deletePlaylist/${selectedPlaylist._id}`
+      );
+      if (resp.data.success) {
+        dispatch(
+          removePlaylist({
+            playlistId: selectedPlaylist._id,
+            category: selectedPlaylist.category,
+          })
+        );
+        setSelectedPlaylist()
+        setDisplayLeft(false)
+      }
+    } catch (error) {
+      console.log(error);
     }
-
-    let resp = await axios.put("/api/playlist/reName",data)
-    if(resp.data.success){
-        setDisplayInput(false);
-        dispatch(renamePlaylist(data))
-    }
-    setDisplayInput(false)
-    setSelectedPlaylist(prev=>({...prev,title:newPlaylistName}))
   };
 
-  // Handle deleting playlist
+  const handleSavePlaylistName = async () => {
+    if (!newPlaylistName.trim()) return;
+
+    let data = {
+      playlistId: selectedPlaylist._id,
+      newName: newPlaylistName,
+      category: selectedPlaylist.category,
+    };
+
+    let resp = await axios.put("/api/playlist/reName", data);
+    if (resp.data.success) {
+      setDisplayInput(false);
+      dispatch(renamePlaylist(data));
+    }
+    setDisplayInput(false);
+    setSelectedPlaylist((prev) => ({ ...prev, title: newPlaylistName }));
+  };
+
   const handleDeletePlaylist = () => {
     const remainingPlaylists = playlists.filter(
       (p) => p.id !== selectedPlaylist.id
@@ -88,21 +111,6 @@ export default function PlaylistManager() {
     setShowConfirmDeletePlaylist(false);
   };
 
-  // Handle removing video from playlist
-  const handleRemoveFromPlaylist = () => {
-    const updatedVideos = selectedPlaylist.videos.filter((v) => !v.selected);
-    const updatedPlaylist = { ...selectedPlaylist, videos: updatedVideos };
-
-    // const updatedPlaylists = playlists.map((p) =>
-    //   p.id === selectedPlaylist.id ? updatedPlaylist : p
-    // );
-
-    // setPlaylists(updatedPlaylists);
-    setSelectedPlaylist(updatedPlaylist);
-    setSelectAllChecked(false);
-  };
-
-  // Handle checkbox change for a video
   const handleVideoCheckboxChange = (videoId) => {
     const updatedVideos = selectedPlaylistVideos.map((v) =>
       v._id === videoId ? { ...v, selected: !v.selected } : v
@@ -110,7 +118,6 @@ export default function PlaylistManager() {
     setSelectedPlaylistVideos(updatedVideos);
   };
 
-  // Handle select all checkbox
   const handleSelectAllChange = () => {
     const newSelectAllValue = !selectAllChecked;
 
@@ -178,19 +185,49 @@ export default function PlaylistManager() {
     }
   }
 
-  async function changePlaylistCategory(playlistId,oldCategory){
-    
-     let newCategory = oldCategory === "hidden" ? "public" : "hidden";
+  async function changePlaylistCategory(playlistId, oldCategory) {
+    let newCategory = oldCategory === "hidden" ? "public" : "hidden";
+    let resp = await axios.put("/api/playlist/changeCategory", { playlistId });
+    if (resp.data.success) {
+      let data = {
+        playlistId,
+        oldCategory,
+        newCategory,
+      };
+      dispatch(changeCategory(data));
+    }
+  }
 
+  async function removeVideos(deleteActive = false) {
+    const selectedIds = selectedPlaylistVideos.reduce((acc, video) => {
+      if (video.selected) {
+        acc.push(video._id);
+      }
+      return acc;
+    }, []);
+    console.log(selectedIds);
 
-    let resp= await axios.put("/api/playlist/changeCategory",{playlistId})
-    if(resp.data.success){
-        let data={
-            playlistId,
-            oldCategory,
-            newCategory
-        }
-        dispatch(changeCategory(data))
+    try {
+      let resp = await axios.put("/api/playlist/removeMultipleVideos", {
+        playlistId: selectedPlaylist._id,
+        videoIds: selectedIds,
+        active: deleteActive,
+      });
+      if (resp.data.success) {
+        let data = {
+          category: selectedPlaylist.category,
+          playlistId: selectedPlaylist._id,
+          videoIds: selectedIds,
+        };
+        dispatch(removeVideosFromPlaylist(data));
+        setSelectedPlaylistVideos((prev) => {
+          let filteredVideos = prev.filter((video) => !video.selected);
+          return filteredVideos;
+        });
+        setSelectAllChecked(false);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -228,16 +265,15 @@ export default function PlaylistManager() {
                     )}
                   </div>
                 ) : (
-                  <div
-                    className="bg-gray-700 px-4 py-3 rounded-lg mb-4 text-lg font-medium flex justify-between items-center cursor-pointer"
-                    
-                  >
+                  <div className="bg-gray-700 px-4 py-3 rounded-lg mb-4 text-lg font-medium flex justify-between items-center cursor-pointer">
                     <span>{selectedPlaylist?.title}</span>
-                    <div onClick={()=>{
-                        setCreatingPlaylist(false)
-                        setDisplayInput(true)
-                    }}>
-                    <Edit size={18} className="text-gray-400" />
+                    <div
+                      onClick={() => {
+                        setCreatingPlaylist(false);
+                        setDisplayInput(true);
+                      }}
+                    >
+                      <Edit size={18} className="text-gray-400" />
                     </div>
                   </div>
                 )}
@@ -245,12 +281,20 @@ export default function PlaylistManager() {
 
               <div className="space-y-3">
                 {!creatingPlaylist && (
-                  <button
-                    className="bg-gray-700 hover:bg-gray-600 w-full py-2 rounded-lg flex items-center justify-center"
-                    onClick={() => {}}
-                  >
-                    Watch
-                  </button>
+                  <>
+                    <button
+                      className="bg-gray-700 hover:bg-gray-600 w-full py-2 rounded-lg flex items-center justify-center"
+                      onClick={() => {}}
+                    >
+                      Watch
+                    </button>
+                    <button
+                      className="bg-red-600 hover:bg-red-500 w-full py-2 rounded-lg flex items-center justify-center"
+                      onClick={DeletePlaylist}
+                    >
+                      Delete Playlist
+                    </button>
+                  </>
                 )}
               </div>
 
@@ -267,7 +311,7 @@ export default function PlaylistManager() {
                       Cancel
                     </button>
                     <button
-                      className="flex-1 bg-red-600 hover:bg-red-500 py-2 rounded text-sm"
+                      className="flex-1  py-2 rounded text-sm"
                       onClick={handleDeletePlaylist}
                     >
                       Delete
@@ -318,11 +362,12 @@ export default function PlaylistManager() {
                     </p>
                   </div>
                   <button
-                  onClick={(e)=>{
-                    e.stopPropagation()
-                    changePlaylistCategory(playlist._id,playlist.category)}
-                }
-                  className="hover:cursor-pointer">
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      changePlaylistCategory(playlist._id, playlist.category);
+                    }}
+                    className="hover:cursor-pointer"
+                  >
                     {playlist.category === "hidden" ? (
                       <EyeOff size={18} />
                     ) : (
@@ -391,7 +436,8 @@ export default function PlaylistManager() {
           <div className="mt-6 flex flex-wrap gap-4 justify-center">
             <button
               className="bg-red-800 hover:bg-red-700 px-4 py-2 rounded-lg flex items-center gap-2"
-              // disabled={!selectedPlaylistVideos.some((v) => v.selected)}
+              disabled={!selectedPlaylistVideos.some((v) => v.selected)}
+              onClick={() => removeVideos()} // ensures no event object gets captured
             >
               <Trash2 size={16} />
               Remove Video
@@ -399,16 +445,10 @@ export default function PlaylistManager() {
 
             <button
               className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg flex items-center gap-2"
-              // disabled={!selectedPlaylist?.videos.some((v) => v.selected)}
+              disabled={!selectedPlaylist?.videos.some((v) => v.selected)}
             >
-              Remove And Delete
+              Remove And Delete Videos
             </button>
-
-            <div className="relative">
-              <button className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg">
-                Onotik (open this box)
-              </button>
-            </div>
           </div>
         )}
       </div>

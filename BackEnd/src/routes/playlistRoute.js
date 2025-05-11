@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { auth } from "../middlewares/auth.js";
 
-import {createPlaylist,getPlaylists,addVideoToPlaylist,removeVideoFromPlaylist,getPlaylistVideos,deletePlaylist,getPLThumbnail, reOrderVideos, reNamePlaylist, changeCategory} from "../controllers/playlist.controller.js";
+import {createPlaylist,getPlaylists,addVideoToPlaylist,removeVideoFromPlaylist,getPlaylistVideos,deletePlaylist,getPLThumbnail, reOrderVideos, reNamePlaylist, changeCategory, removeVideosFromPlaylist} from "../controllers/playlist.controller.js";
 
 const playlistRouter = Router()
 
@@ -16,6 +16,7 @@ playlistRouter.route("/deletePlaylist/:playlistId").delete(deletePlaylist)
 playlistRouter.route("/reOrder/:id").put(reOrderVideos) 
 playlistRouter.route("/reName").put(reNamePlaylist) 
 playlistRouter.route("/changeCategory").put(changeCategory) 
+playlistRouter.route("/removeMultipleVideos").put(removeVideosFromPlaylist) 
 
 export default playlistRouter
 

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   setCurrentVideo,
 } from "../slices/currentVideoSlice";
-import { deletePlaylist } from "../slices/playlistSlice";
+// import { deletePlaylist } from "../slices/playlistSlice";
 import { useEffect, useMemo, useState } from "react";
 import PlaylistCard from "../components/playlistCard";
 import { useAuth } from "../protection/useAuth";
@@ -34,18 +34,18 @@ function MyPlaylist() {
       console.log(error);
     }
   }
-  async function DeletePlaylist(id) {
-    try {
-      let resp = await axios.delete(`/api/playlist/deletePlaylist/${id}`);
-      console.log(resp);
-      if (resp) {
-        console.log("dne");
-        dispatch(deletePlaylist({ id: id, category: "public" }));
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // async function DeletePlaylist(id) {
+  //   try {
+  //     let resp = await axios.delete(`/api/playlist/deletePlaylist/${id}`);
+  //     console.log(resp);
+  //     if (resp) {
+  //       console.log("dne");
+  //       dispatch(deletePlaylist({ id: id, category: "public" }));
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   const [playListThumbnail, setPlaylistThumbnail] = useState({});
 
@@ -99,7 +99,7 @@ function MyPlaylist() {
                 key={playlist?._id}
                 playlist={playlist}
                 onNavigate={() => navigateToVideoPage(playlist._id)   }
-                onDelete=  {() => DeletePlaylist(playlist?._id)}
+                // onDelete=  {() => DeletePlaylist(playlist?._id)}
                 thumbnail= {   playListThumbnail[playlist?._id]}
               />
             ))}
