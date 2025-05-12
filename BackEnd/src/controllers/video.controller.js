@@ -418,8 +418,9 @@ const searchedVideos = asyncHandler(async (req, res) => {
 
 const editVideo = async (req, res) => {
   try {
+console.log("called one");
+
     const updateFields = {};
-    console.log(req.file.path);
 
     if (req.body.title) updateFields.title = req.body.title;
     if (req.body.description) updateFields.description = req.body.description;
@@ -437,7 +438,7 @@ const editVideo = async (req, res) => {
       const picUploaded = await uploadOnCloudinary(req.file.path);
       updateFields.thumbnail = picUploaded.url;
     }
-
+console.log("called mid");
     const updatedVideo = await videoModel.findByIdAndUpdate(
       req.params.id,
       { $set: updateFields },

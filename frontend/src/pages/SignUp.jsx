@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { INPUT, signUpPageUI } from "../UI.js";
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {  useState } from "react";
 import axios from 'axios';
 
@@ -8,7 +8,7 @@ import axios from 'axios';
 export default function SignUpPage() {
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [showPass, setShowPass] = useState(false);
   const togglePasswordVisibility = () => setShowPass(!showPass);
 
@@ -31,7 +31,7 @@ export default function SignUpPage() {
   }
 
   function navBack() {
-    // setFadeOut(true);
+    navigate("/login")
   }
   // const nodeRef = useRef(null);
   return (

@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import path from "path"
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -50,6 +51,7 @@ const uploadOnCloudinary = async (localFilePath) => {
     return null;
   }
 };
+
 
 const deletefromCloudinary= async (publicIdAray,type) => {
   try {
