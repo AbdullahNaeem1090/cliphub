@@ -12,13 +12,17 @@ import {
 import { CustomToast } from "../utils/showUtils";
 import { useAuth } from "../protection/useAuth";
 import Comments from "./comments";
+import { Copy } from "lucide-react";
 
-function VideoSection({ currVideo , setOpenplaylistCard , isInPlaylist , playlistVideos }) {
-    
+function VideoSection({
+  currVideo,
+  setOpenplaylistCard,
+  isInPlaylist,
+  playlistVideos,
+}) {
   const [description, setdescription] = useState(false);
   const dispatch = useDispatch();
   const { currUser } = useAuth();
-  
 
   async function unSubscribe() {
     let resp = await axios.post("/api/subscription/unSubscribe", {
@@ -66,20 +70,34 @@ function VideoSection({ currVideo , setOpenplaylistCard , isInPlaylist , playlis
     }
   }
 
-  async function handleVideoEnd(){
-    let currVideoIndex=playlistVideos.findIndex(video => video._id === currVideo._id)
-    if(currVideoIndex==playlistVideos.length-1) return 
-    let nextVideoId=playlistVideos[currVideoIndex+1]._id
-    console.log(currVideoIndex,nextVideoId)
+  async function handleVideoEnd() {
+    let currVideoIndex = playlistVideos.findIndex(
+      (video) => video._id === currVideo._id
+    );
+    if (currVideoIndex == playlistVideos.length - 1) return;
+    let nextVideoId = playlistVideos[currVideoIndex + 1]._id;
+    console.log(currVideoIndex, nextVideoId);
 
     try {
-      let resp = await axios.get(`/api/video/getPlayingVideoData/${nextVideoId}/${currUser._id}`);
-            dispatch(setCurrentVideo(resp.data.data))
+      let resp = await axios.get(
+        `/api/video/getPlayingVideoData/${nextVideoId}/${currUser._id}`
+      );
+      dispatch(setCurrentVideo(resp.data.data));
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-  
+
+  const copyToClipboard = () => {
+    navigator.clipboard
+      .writeText(currVideo.videoURL)
+      .then(() => {
+        CustomToast(dispatch, "Copied");
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  };
 
   return (
     <div className="lg:w-[70%]">
@@ -119,6 +137,14 @@ function VideoSection({ currVideo , setOpenplaylistCard , isInPlaylist , playlis
               </div>
             </div>
             <div className="flex lg:space-x-6 space-x-2">
+              <button
+                className="flex flex-col items-center"
+                onClick={copyToClipboard}
+              >
+                <Copy className="md:h-8 md:w-8 h-6 w-6 text-white cursor-pointer" />
+
+                <p className="text-white text-sm">Copy Link</p>
+              </button>
               <button
                 className="flex flex-col items-center"
                 onClick={() => setOpenplaylistCard(true)}

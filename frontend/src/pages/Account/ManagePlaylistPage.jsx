@@ -19,18 +19,25 @@ import {
   _createPlaylist,
   changeCategory,
   removePlaylist,
+  removeVideoFromPLCollection,
   removeVideosFromPlaylist,
   renamePlaylist,
 } from "../../slices/playlistSlice";
+import { setCurrentVideo } from "../../slices/currentVideoSlice";
+import { useAuth } from "../../protection/useAuth";
+import { useNavigate } from "react-router-dom";
+import { CustomToast } from "../../utils/showUtils";
 
 export default function PlaylistManager() {
   const { _public, _hidden } = useSelector((state) => state.playlist);
+  const { currUser } = useAuth();
   const playlists = [..._public, ..._hidden];
   const [selectedPlaylistVideos, setSelectedPlaylistVideos] = useState([]);
   const sensors = useSensors(useSensor(PointerSensor));
   const [creatingPlaylist, setCreatingPlaylist] = useState(false);
   const dispatch = useDispatch();
   const [displayLeftBox, setDisplayLeft] = useState(false);
+  const navigate = useNavigate();
 
   const [selectedPlaylist, setSelectedPlaylist] = useState();
   const [displayInput, setDisplayInput] = useState(false);
@@ -76,8 +83,8 @@ export default function PlaylistManager() {
             category: selectedPlaylist.category,
           })
         );
-        setSelectedPlaylist()
-        setDisplayLeft(false)
+        setSelectedPlaylist();
+        setDisplayLeft(false);
       }
     } catch (error) {
       console.log(error);
@@ -205,15 +212,16 @@ export default function PlaylistManager() {
       }
       return acc;
     }, []);
-    console.log(selectedIds);
+
+    if (!selectedIds.length) return;
 
     try {
-      let resp = await axios.put("/api/playlist/removeMultipleVideos", {
+      let resp1 = await axios.put("/api/playlist/removeMultipleVideos", {
         playlistId: selectedPlaylist._id,
         videoIds: selectedIds,
-        active: deleteActive,
       });
-      if (resp.data.success) {
+      console.log(resp1);
+      if (resp1.data.success) {
         let data = {
           category: selectedPlaylist.category,
           playlistId: selectedPlaylist._id,
@@ -226,6 +234,35 @@ export default function PlaylistManager() {
         });
         setSelectAllChecked(false);
       }
+      if (deleteActive) {
+        let resp2 = await axios.post("/api/video/deleteManyVideos", {
+          videoIds: selectedIds,
+        });
+        console.log(resp2.data)
+        if (resp2.data.success) {
+          CustomToast(dispatch, "Deletion Completed");
+          dispatch(removeVideoFromPLCollection({videoIds:selectedIds}))
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function navigateToVideoPage() {
+    let playlist = playlists.find(
+      (playlist) => playlist._id == selectedPlaylist._id
+    );
+    let videoId = playlist?.videos[0];
+    if (!videoId) {
+      return;
+    }
+    try {
+      let resp = await axios.get(
+        `/api/video/getPlayingVideoData/${videoId}/${currUser._id}`
+      );
+      dispatch(setCurrentVideo(resp.data.data));
+      navigate(`/main/watchPlaylist/${selectedPlaylist._id}/false`);
     } catch (error) {
       console.log(error);
     }
@@ -284,7 +321,7 @@ export default function PlaylistManager() {
                   <>
                     <button
                       className="bg-gray-700 hover:bg-gray-600 w-full py-2 rounded-lg flex items-center justify-center"
-                      onClick={() => {}}
+                      onClick={navigateToVideoPage}
                     >
                       Watch
                     </button>
@@ -445,7 +482,8 @@ export default function PlaylistManager() {
 
             <button
               className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg flex items-center gap-2"
-              disabled={!selectedPlaylist?.videos.some((v) => v.selected)}
+              disabled={!selectedPlaylistVideos?.some((v) => v.selected)}
+              onClick={() => removeVideos(true)}
             >
               Remove And Delete Videos
             </button>

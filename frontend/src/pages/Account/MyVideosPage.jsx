@@ -9,6 +9,7 @@ import { setCurrentVideo } from "../../slices/currentVideoSlice";
 import VideoBox from "../../components/videoBox";
 import { CustomToast } from "../../utils/showUtils";
 import EditForm from "../../components/editForm";
+import { removeVideoFromPLCollection } from "../../slices/playlistSlice";
 
 function MyVideos() {
   const queryClient = useQueryClient();
@@ -54,6 +55,7 @@ function MyVideos() {
       queryClient.setQueryData(["userVideos"], (old) =>
         old.filter((v) => v._id !== videoId)
       );
+      dispatch(removeVideoFromPLCollection({ videoIds:[videoId] }));
       CustomToast(dispatch, "Deleted");
       return { previousVideos };
     },
@@ -93,7 +95,9 @@ function MyVideos() {
         {data.map((video) => (
           <VideoBox
             key={video._id}
-            navigateToVideoPage={() =>navigateToVideoPage(video._id, currUser._id)}
+            navigateToVideoPage={() =>
+              navigateToVideoPage(video._id, currUser._id)
+            }
             video={video}
             channelName={currUser.username}
             avatar={currUser.avatar}

@@ -21,7 +21,9 @@ import {
 } from "@dnd-kit/sortable";
 
 function PlaylistSideVideos({ setPlaylistVideos }) {
-  const { playlistId } = useParams();
+  const params = useParams();
+  const playlistId=params.playlistId
+  const enableDrag = params.enableDrag === "true"
   const currVideo = useSelector((state) => state.currentVideo);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -77,7 +79,7 @@ function PlaylistSideVideos({ setPlaylistVideos }) {
       }
     }
   };
-
+console.log(videos)
   if (loading) return <p>Loading...</p>;
 
   return (
@@ -101,6 +103,7 @@ function PlaylistSideVideos({ setPlaylistVideos }) {
                 video={video}
                 currVideoId={currVideo._id}
                 changeVideo={changeVideo}
+                enableDrag={enableDrag}
               />
             ))}
           </SortableContext>

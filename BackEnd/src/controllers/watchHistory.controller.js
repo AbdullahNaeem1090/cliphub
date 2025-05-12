@@ -74,7 +74,6 @@ const getWatchHistory = asyncHandler(async (req, res) => {
 });
 
 const deleteVideoFromHistory = asyncHandler(async (req, res) => {
-  console.log("calleeee");
   await whatchHistoryModel.findByIdAndDelete(req.params.id);
 
   return res.json(new ApiResponse(200, {}, "Deleted", true));

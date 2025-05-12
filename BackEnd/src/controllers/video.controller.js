@@ -64,7 +64,7 @@ const uploadVideo = asyncHandler(async (req, res) => {
   return res.json(new ApiResponse(200, creatingVideoDoc, "✅ Video Uploaded"));
 });
 
-// newIntegration
+
 const verifyVideo = async (req, res) => {
   let { videoId } = req.params;
   if (!videoId) {
@@ -90,7 +90,6 @@ const verifyVideo = async (req, res) => {
   );
 };
 
-// newIntegration
 const deleteGarbageVideos = asyncHandler(async (req, res) => {
   try {
     let videos = await videoModel
@@ -183,134 +182,7 @@ const deleteMyVideo = asyncHandler(async (req, res) => {
   );
 });
 
-//deprecated id:2
-const playingVideoData = asyncHandler(async (req, res) => {
-  const { videoId } = req.params;
-  if (!videoId) {
-    return res.status(400).json({ message: "Video Id mising" });
-  }
 
-  const videoDetails = await videoModel.aggregate([
-    {
-      $match: {
-        _id: new mongoose.Types.ObjectId(videoId),
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "owner",
-        foreignField: "_id",
-        as: "ownerDetails",
-        pipeline: [
-          {
-            $project: {
-              username: 1,
-              avatar: 1,
-              email: 1,
-            },
-          },
-        ],
-      },
-    },
-    {
-      $lookup: {
-        from: "subscriptions",
-        localField: "owner",
-        foreignField: "subscribedTo",
-        as: "subscribersArray",
-      },
-    },
-    {
-      $lookup: {
-        from: "likes",
-        localField: "_id",
-        foreignField: "likedVideoId",
-        as: "liked_docs",
-      },
-    },
-    {
-      $lookup: {
-        from: "comments",
-        localField: "_id",
-        foreignField: "Commented_Video_id",
-        as: "comments",
-        pipeline: [
-          {
-            $lookup: {
-              from: "users",
-              localField: "author",
-              foreignField: "_id",
-              as: "commenter",
-              pipeline: [
-                {
-                  $project: {
-                    username: 1,
-                    avatar: 1,
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      $lookup: {
-        from: "comments",
-        localField: "_id",
-        foreignField: "Commented_Video_id",
-        as: "reply_array",
-        pipeline: [
-          {
-            $lookup: {
-              from: "rep_comments",
-              localField: "_id",
-              foreignField: "ParentComment_id",
-              as: "replies",
-              pipeline: [
-                {
-                  $lookup: {
-                    from: "users",
-                    localField: "author",
-                    foreignField: "_id",
-                    as: "repliers",
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-    {
-      $project: {
-        title: 1,
-        videoURL: 1,
-        description: 1,
-        playListMember: 1,
-        subscribersCount: { $size: "$subscribersArray" },
-        likes_count: { $size: "$liked_docs" },
-        "ownerDetails.username": 1,
-        "ownerDetails.avatar": 1,
-        "ownerDetails._id": 1,
-        "ownerDetails.email": 1,
-        "comments._id": 1,
-        "comments.comment": 1,
-        "comments.author": 1,
-        "comments.commenter": 1,
-        "reply_array.replies.rep_comment": 1,
-        "reply_array.replies.ParentComment_id": 1,
-        "reply_array.replies.repliers.username": 1,
-        "reply_array.replies.repliers.avatar": 1,
-      },
-    },
-  ]);
-
-  console.log(videoDetails);
-
-  return res.json(new ApiResponse(200, videoDetails, "video details sent"));
-});
 
 //substitute id:2
 const getPlayingVideoData = asyncHandler(async (req, res) => {
@@ -423,37 +295,6 @@ const getPlayingVideoData = asyncHandler(async (req, res) => {
   return res.json(new ApiResponse(200, videoDetails[0], "Video details sent"));
 });
 
-//deprecated id:1
-const getAllVideos = asyncHandler(async (_, res) => {
-  const allVideos = await videoModel.aggregate([
-    { $match: { isVerified: true } },
-    { $sample: { size: 10 } },
-    {
-      $lookup: {
-        from: "users",
-        localField: "owner",
-        foreignField: "_id",
-        as: "videoCreaters",
-        pipeline: [
-          {
-            $project: { avatar: 1, username: 1 },
-          },
-        ],
-      },
-    },
-    { $unwind: "$videoCreaters" },
-    {
-      $project: {
-        _id: 1,
-        title: 1,
-        thumbnail: 1,
-        avatar: "$videoCreaters.avatar",
-        username: "$videoCreaters.username",
-      },
-    },
-  ]);
-  return res.json(new ApiResponse(200, allVideos, "videos sent"));
-});
 
 //substitue id:1
 const getnewVideos = asyncHandler(async (req, res) => {
@@ -586,12 +427,15 @@ const editVideo = async (req, res) => {
     if (req.file) {
       const video = await videoModel.findById(req.params.id);
       if (video?.thumbnail) {
-        await deletefromCloudinary([get_PublicId_From_URL(video.thumbnail)], "image");
+        await deletefromCloudinary(
+          [get_PublicId_From_URL(video.thumbnail)],
+          "image"
+        );
       }
 
       console.log(req.file.path);
       const picUploaded = await uploadOnCloudinary(req.file.path);
-      updateFields.thumbnail = picUploaded.url
+      updateFields.thumbnail = picUploaded.url;
     }
 
     const updatedVideo = await videoModel.findByIdAndUpdate(
@@ -609,6 +453,50 @@ const editVideo = async (req, res) => {
   }
 };
 
+const deleteMultipleVieos = asyncHandler(async (req, res) => {
+  let { videoIds } = req.body;
+  try {
+    const videos = await videoModel.find({ _id: { $in: videoIds } });
+
+    let thumbnailArray_Of_PublicIds = [];
+    let videoArray_Of_PublicIds = [];
+
+    for (let video of videos) {
+      thumbnailArray_Of_PublicIds.push(get_PublicId_From_URL(video.thumbnail));
+      videoArray_Of_PublicIds.push(get_PublicId_From_URL(video.videoURL));
+    }
+
+    if (!videos.length > 0) {
+      return res.status(300).json({ message: "No unverified Video" });
+    }
+
+    await deletefromCloudinary(thumbnailArray_Of_PublicIds, "image");
+    await deletefromCloudinary(videoArray_Of_PublicIds, "video");
+
+    const deleteResult = await videoModel.deleteMany({
+      _id: { $in: videos.map((video) => video._id) },
+    });
+
+    console.log(
+      `${deleteResult.deletedCount} video(s) were deleted from the database.`
+    );
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          deleteResult.deletedCount,
+          "Videos deleted successfully",
+          true
+        )
+      );
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({ message: "Error deleting videos", error });
+  }
+});
+
 export {
   getPlayingVideoData,
   getnewVideos,
@@ -616,10 +504,9 @@ export {
   uploadVideo,
   getUserVideos,
   deleteMyVideo,
-  playingVideoData,
-  getAllVideos,
   searchApi,
   searchedVideos,
   deleteGarbageVideos,
   editVideo,
+  deleteMultipleVieos,
 };

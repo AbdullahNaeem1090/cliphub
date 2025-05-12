@@ -20,7 +20,6 @@ import WatchVideoPage from "./pages/WatchVideoPage.jsx";
 import WatchPlaylistPage from "./pages/watchPlaylistPage.jsx";
 import AccountLayout from "./layout/AccountLayout.jsx";
 import MyVideosPage from "./pages/Account/MyVideosPage.jsx";
-import MyPlaylistPage from "./pages/Account/MyPlaylistsPage.jsx";
 import UploadVideoPage from "./pages/Account/UploadVideoPage.jsx";
 import ProfilePic from "./components/profileChange.jsx";
 import PassChange from "./components/passchange.jsx";
@@ -59,7 +58,7 @@ const router = createBrowserRouter(
         <Route path="srvp" element={<SearchResultVideosPage />} />
         <Route path="wvp" element={<WatchVideoPage />} />
         <Route
-          path="watchPlaylist/:playlistId"
+          path="watchPlaylist/:playlistId/:enableDrag"
           element={<WatchPlaylistPage />}
         />
         <Route path="watchHistory" element={<WatchHistory />} />
@@ -79,7 +78,6 @@ const router = createBrowserRouter(
         <Route path="account" element={<AccountLayout />}>
           <Route index element={<MyVideosPage />} />
           <Route path="myVideos" element={<MyVideosPage />} />
-          <Route path="myPlaylist" element={<MyPlaylistPage />} />
           <Route path="managePlaylist" element={<ManagePlaylistPage />} />
           <Route path="uploadVideo" element={<UploadVideoPage />} />
         </Route>

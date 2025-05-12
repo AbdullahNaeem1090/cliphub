@@ -38,16 +38,16 @@ function AccountLayout() {
               My Videos
             </NavLink>
           </li>
-          <li className="me-2">
+           <li className="me-2">
             <NavLink
-              to="myPlaylist"
+              to="managePlaylist"
               className={({ isActive }) =>
                 isActive
                   ? "inline-block p-4 text-blue-600 border-b-2 border-blue-600"
                   : "inline-block p-4 hover:text-gray-600"
               }
             >
-              PlayLists
+              Manage Playlist
             </NavLink>
           </li>
           <li className="me-2">
@@ -62,18 +62,7 @@ function AccountLayout() {
               Create Video
             </NavLink>
           </li>
-          <li className="me-2">
-            <NavLink
-              to="managePlaylist"
-              className={({ isActive }) =>
-                isActive
-                  ? "inline-block p-4 text-blue-600 border-b-2 border-blue-600"
-                  : "inline-block p-4 hover:text-gray-600"
-              }
-            >
-              Manage Playlist
-            </NavLink>
-          </li>
+         
         </ul>
       </div>
 

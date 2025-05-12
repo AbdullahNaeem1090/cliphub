@@ -281,7 +281,7 @@ const changeCategory = async (req, res) => {
 };
 
 const removeVideosFromPlaylist = asyncHandler(async (req, res) => {
-  const { videoIds, playlistId, active } = req.body;
+  const { videoIds, playlistId } = req.body;
 
   if (
     !videoIds ||
@@ -294,27 +294,34 @@ const removeVideosFromPlaylist = asyncHandler(async (req, res) => {
 
   const updatedPlaylist = await playlistModel.findOneAndUpdate(
     { _id: playlistId },
-    { $pull: { videos: { $in: videoIds } } }
+    { $pull: { videos: { $in: videoIds } } },
+    { new: true }
   );
 
   if (!updatedPlaylist) {
     return res.status(404).json({ error: "Playlist not found" });
   }
 
-  if (active) {
-    await videoModel.deleteMany({ _id: { $in: videoIds } });
-  }
+  const result = await playlistModel.updateMany(
+    { 
+      _id: { $ne: playlistId },
+      videos: { $in: videoIds }
+    },
+    { $pull: { videos: { $in: videoIds } } }
+  );
 
   return res.json(
     new ApiResponse(
       200,
-      {},
-      "Videos removed from playlist" + (active ? " and deleted" : ""),
+      {
+        updatedPlaylist,
+        otherPlaylistsUpdated: result.modifiedCount
+      },
+      `Videos removed from playlist and ${result.modifiedCount} other playlists`,
       true
     )
   );
 });
-
 export {
   createPlaylist,
   getPlaylists,

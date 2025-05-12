@@ -37,16 +37,29 @@ export const playlistSlice = createSlice({
       });
     },
 
- removePlaylist: (state, action) => {
-  const { playlistId, category } = action.payload;
-  const categoryKey = `_${category}`; // assuming structure like _public, _hidden, etc.
+    removeVideoFromPLCollection:(state,action)=>{
+      let {videoIds}=action.payload
+      state._private.forEach((playlist)=>{
+       playlist.videos= playlist.videos.filter(id=>!videoIds.includes(id))
+      })
+      state._public.forEach((playlist)=>{
+       playlist.videos= playlist.videos.filter(id=>!videoIds.includes(id))
+      })
+      state._hidden.forEach((playlist)=>{
+       playlist.videos= playlist.videos.filter(id=>!videoIds.includes(id))
+      })
+    },
 
-  if (!state[categoryKey]) return;
+    removePlaylist: (state, action) => {
+      const { playlistId, category } = action.payload;
+      const categoryKey = `_${category}`;
 
-  state[categoryKey] = state[categoryKey].filter(
-    (playlist) => playlist._id !== playlistId
-  );
-},
+      if (!state[categoryKey]) return;
+
+      state[categoryKey] = state[categoryKey].filter(
+        (playlist) => playlist._id !== playlistId
+      );
+    },
 
     renamePlaylist: (state, action) => {
       const { playlistId, newName, category } = action.payload;
@@ -94,7 +107,8 @@ export const {
   removePlaylist,
   renamePlaylist,
   changeCategory,
-  removeVideosFromPlaylist
+  removeVideosFromPlaylist,
+  removeVideoFromPLCollection,
 } = playlistSlice.actions;
 
 export default playlistSlice.reducer;

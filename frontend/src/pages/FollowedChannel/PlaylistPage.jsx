@@ -64,7 +64,7 @@ function SubscribedChannelPlaylists() {
      try {
        let resp = await axios.get(`/api/video/getPlayingVideoData/${videoId}/${currUser._id}`);
        dispatch(setCurrentVideo(resp.data.data));
-       navigate(`/main/watchPlaylist/${playlistId}`)
+       navigate(`/main/watchPlaylist/${playlistId}/false`)
      } catch (error) {
        console.log(error);
      }
@@ -92,6 +92,7 @@ function SubscribedChannelPlaylists() {
                 playlist={playlist}
                 onNavigate={() => navigateToVideoPage(playlist._id)}
                 thumbnail={playListThumbnail[playlist?._id]}
+                deleteControl={false}
               />
             ))}
           </div>

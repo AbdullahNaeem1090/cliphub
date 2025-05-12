@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-function PlaylistCard({ playlist, onNavigate, onDelete, thumbnail }) {
+function PlaylistCard({ playlist, onNavigate, onDelete, thumbnail,deleteControl }) {
   return (
     <div
       onClick={onNavigate}
@@ -18,10 +18,11 @@ function PlaylistCard({ playlist, onNavigate, onDelete, thumbnail }) {
       <div className="bg-transparent p-4 flex justify-between items-start">
         <div>
           <h5 className="text-xl font-semibold text-white mb-1">{playlist?.title}</h5>
-          <p className="text-sm text-gray-400">Type: {playlist?.type || "Standard"}</p>
           <p className="text-sm text-gray-400">Videos: {playlist?.videos.length}</p>
         </div>
-        <img
+        {
+          deleteControl &&
+          <img
           src="/src/assets/delete.png"
           className="h-6 w-6 hover:scale-110 transition-transform duration-150"
           alt="Delete"
@@ -30,6 +31,8 @@ function PlaylistCard({ playlist, onNavigate, onDelete, thumbnail }) {
             onDelete();
           }}
         />
+        }
+        
       </div>
     </div>
   );
@@ -40,6 +43,7 @@ PlaylistCard.propTypes = {
   onNavigate: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   thumbnail: PropTypes.string,
+  deleteControl: PropTypes.bool,
 };
 
 export default PlaylistCard;

@@ -95,12 +95,7 @@ console.log(isAuthenticated,isAuthenticating)
                                     {showPassword ? '🧐' : '😑'}
                                 </button>
                                 {errors.password && <p>{errors.password.message}</p>}
-                                <label className="flex items-center mt-2" >
-                                    <input type="checkbox" className="mr-2 h-5 w-4 text-teal-600 border-gray-300 rounded" 
-                                    {...register('rememberMe')}
-                                    />
-                                    Remember me
-                                </label>
+                               
                             </div>
                             <input type="submit" value="login" className={loginPageUI.submitUI} />
                             <p className="text-red-600 font-bold">{errMsg}</p>

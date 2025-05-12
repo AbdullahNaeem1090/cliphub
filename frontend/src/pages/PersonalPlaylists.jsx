@@ -1,51 +1,54 @@
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {
-  setCurrentVideo,
-} from "../slices/currentVideoSlice";
+import { setCurrentVideo } from "../slices/currentVideoSlice";
 // import { deletePlaylist } from "../slices/playlistSlice";
 import { useEffect, useMemo, useState } from "react";
 import PlaylistCard from "../components/playlistCard";
 import { useAuth } from "../protection/useAuth";
-
+import { removePlaylist } from "../slices/playlistSlice";
 
 function MyPlaylist() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {currUser}=useAuth()
+  const { currUser } = useAuth();
 
   const { _private } = useSelector((state) => state.playlist);
 
   const playlists = useMemo(() => [..._private], [_private]);
 
   async function navigateToVideoPage(playlistId) {
-   let playlist= playlists.find((playlist)=>playlist._id==playlistId)
-   let videoId=playlist?.videos[0]
-   console.log(playlist,videoId)
-    if(!videoId){
-      return
+    let playlist = playlists.find((playlist) => playlist._id == playlistId);
+    let videoId = playlist?.videos[0];
+    console.log(playlist, videoId);
+    if (!videoId) {
+      return;
     }
     try {
-      let resp = await axios.get(`/api/video/getPlayingVideoData/${videoId}/${currUser._id}`);
+      let resp = await axios.get(
+        `/api/video/getPlayingVideoData/${videoId}/${currUser._id}`
+      );
       dispatch(setCurrentVideo(resp.data.data));
-      navigate(`/main/watchPlaylist/${playlistId}`)
+      navigate(`/main/watchPlaylist/${playlistId}/true`);
     } catch (error) {
       console.log(error);
     }
   }
-  // async function DeletePlaylist(id) {
-  //   try {
-  //     let resp = await axios.delete(`/api/playlist/deletePlaylist/${id}`);
-  //     console.log(resp);
-  //     if (resp) {
-  //       console.log("dne");
-  //       dispatch(deletePlaylist({ id: id, category: "public" }));
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
+  const DeletePlaylist = async (id) => {
+    try {
+      let resp = await axios.delete(`/api/playlist/deletePlaylist/${id}`);
+      if (resp.data.success) {
+        dispatch(
+          removePlaylist({
+            playlistId: id,
+            category: "private",
+          })
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const [playListThumbnail, setPlaylistThumbnail] = useState({});
 
@@ -83,7 +86,6 @@ function MyPlaylist() {
     );
   }
 
-
   return (
     <>
       <div className="p-3 md:p-4 sm:ml-56 scrollbar-custom">
@@ -93,17 +95,16 @@ function MyPlaylist() {
           </p>
 
           <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-4 lg:ml-3">
-
             {playlists.map((playlist) => (
               <PlaylistCard
                 key={playlist?._id}
                 playlist={playlist}
-                onNavigate={() => navigateToVideoPage(playlist._id)   }
-                // onDelete=  {() => DeletePlaylist(playlist?._id)}
-                thumbnail= {   playListThumbnail[playlist?._id]}
+                onNavigate={() => navigateToVideoPage(playlist._id)}
+                onDelete={() => DeletePlaylist(playlist?._id)}
+                thumbnail={playListThumbnail[playlist?._id]}
+                deleteControl={true}
               />
             ))}
-
           </div>
         </div>
       </div>

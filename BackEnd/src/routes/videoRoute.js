@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { upload } from "../middlewares/multer.js";
-import { verifyVideo,uploadVideo,getUserVideos,deleteMyVideo,playingVideoData,getAllVideos, searchApi, searchedVideos,deleteGarbageVideos,getnewVideos, getPlayingVideoData,editVideo} from "../controllers/video.controller.js";
+import { verifyVideo,uploadVideo,getUserVideos,deleteMyVideo, searchApi, searchedVideos,deleteGarbageVideos,getnewVideos, getPlayingVideoData,editVideo, deleteMultipleVieos} from "../controllers/video.controller.js";
 
 const vidRouter = Router()
 
@@ -20,12 +20,11 @@ vidRouter.route("/delVideo/:videoId").delete(deleteMyVideo)
 vidRouter.route("/search/:query").get(searchApi)   
 vidRouter.route("/searchVideos/:query").get(searchedVideos)   
 vidRouter.route("/editVideo/:id").put(upload.single("thumbnail"),editVideo)
-vidRouter.route("/getVideos").get(getAllVideos)   // dep 1
 vidRouter.route("/getnewVideos/:lastVideoId?").get(getnewVideos) //sub 1
-vidRouter.route("/playVideo/:videoId").get(playingVideoData)  //dep 2
 vidRouter.route("/getPlayingVideoData/:videoId/:userId").get(getPlayingVideoData)   //sub 2
 
 vidRouter.route("/deleteGarbageVideos").get(deleteGarbageVideos) // new   
+vidRouter.route("/deleteManyVideos").post(deleteMultipleVieos) // new   
 vidRouter.route("/setVerifyTrue/:videoId").get(verifyVideo)  //new 
 
 

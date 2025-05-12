@@ -8,24 +8,6 @@ import { generateAccessAndRefereshTokens } from "../middlewares/auth.js";
 import { subscriptionModel } from "../models/subscription.model.js";
 import { get_PublicId_From_URL } from "./video.controller.js";
 
-// forgot password functionality is yet to be done
-
-// async function generateToken(userId) {
-
-//    try {
-//       const user = await userModel.findById(userId)
-//       const accessToken = user.generateAccessToken()
-//       const refreshToken = user.generateRefreshToken()
-
-//       user.refreshToken = refreshToken
-
-//       await user.save({ validateBeforeSave: false })
-
-//       return { accessToken, refreshToken }
-//    } catch (error) {
-//       throw new apiError(500, "something went wrong")
-//    }
-// }
 
 const userSignUp = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;

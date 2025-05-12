@@ -1,6 +1,5 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { likeModel } from "../models/like.model.js";
-import { commentModel } from "../models/comment.model.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
 const addLike = asyncHandler(async (req, res) => {
