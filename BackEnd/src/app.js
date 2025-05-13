@@ -2,6 +2,9 @@ import express from 'express'
 import cors from 'cors'
 import cookieParser from "cookie-parser"
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 const app = express()
 
 app.use(cookieParser())
@@ -36,6 +39,18 @@ app.use("/api/like",likeRouter)
 
 import watchHistoryRouter from './routes/watchHistoryRoute.js'
 app.use("/api/watchHistory",watchHistoryRouter) 
+
+import dbConnection from './dataBase/dbConnection.js'
+
+dbConnection()
+.then(() => {
+    app.listen(process.env.PORT,
+    () => console.log("App is listening on port", process.env.PORT||8000))
+}).catch((error) => {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  });
+
 
 export default app
 
