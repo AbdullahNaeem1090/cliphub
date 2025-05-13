@@ -9,7 +9,7 @@ class apiError extends Error {
         this.data=null
         this.Status=Status
         this.success=false
-        this.errors=errors
+        this.errors=errors 
     }
 }
 

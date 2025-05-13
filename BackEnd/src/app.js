@@ -35,7 +35,7 @@ import likeRouter from './routes/likeRoute.js'
 app.use("/api/like",likeRouter)
 
 import watchHistoryRouter from './routes/watchHistoryRoute.js'
-app.use("/api/watchHistory",watchHistoryRouter)
+app.use("/api/watchHistory",watchHistoryRouter) 
 
 export default app
 

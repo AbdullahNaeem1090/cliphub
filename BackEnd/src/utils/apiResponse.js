@@ -5,6 +5,6 @@ class ApiResponse{
         this.message=message
         this.success=status<400
     }
-}
+} 
 
 export {ApiResponse}
