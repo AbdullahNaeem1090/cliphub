@@ -8,8 +8,6 @@ const SidebarVideoCard = ({ video, currVideoId, changeVideo, enableDrag }) => {
       id: video._id,
     });
 
-    console.log(enableDrag)
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,

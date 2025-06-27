@@ -6,7 +6,6 @@ import { useAuth } from "../protection/useAuth";
 
 function Subscription() {
   const { currUser } = useAuth();
-  console.log(currUser._id);
 
   async function getSubscribedChannels() {
     let resp = await axios.get(
@@ -20,7 +19,6 @@ function Subscription() {
     queryFn: getSubscribedChannels,
     refetchOnWindowFocus: false,
   });
-  console.log(data);
 
   const navigate = useNavigate();
 

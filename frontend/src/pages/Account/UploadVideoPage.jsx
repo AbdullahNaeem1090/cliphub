@@ -91,7 +91,6 @@ function UploadVideo() {
       clearAllInputs();
       dispatch(finishProgress());
       uploadController.current.abort();
-      console.log("Upload canceled!");
       CustomToast(dispatch, "✖️ Uploading Cancelled");
     }
   }

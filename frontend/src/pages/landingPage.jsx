@@ -13,7 +13,6 @@ export default function LandingPage() {
 
   setTimeout(() => {
     if (isAuthenticated) {
-      console.log("called")
       getUserPlaylists(dispatch,currUser._id)
       navigate("/main");
 

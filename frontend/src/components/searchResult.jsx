@@ -5,13 +5,11 @@ import { setCurrentVideo } from "../slices/currentVideoSlice"
 
 
 function SearchResultVideosPage() {
-    console.log("searh rendered")
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
     const result = useOutletContext()
-    console.log(result)
 
     async function navigateToVideoPage(videoId) {
         let resp = await axios.get(`/api/video/playVideo/${videoId}`)

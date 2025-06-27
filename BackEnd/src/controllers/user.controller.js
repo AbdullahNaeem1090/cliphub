@@ -103,7 +103,6 @@ const uploadAvatar = asyncHandler(async (req, res) => {
     )
 
    let publicUrl= get_PublicId_From_URL(beforeUpdate?.avatar)
-   console.log("deleting",publicUrl);
    await deletefromCloudinary([publicUrl],"image")
 
   const updatedUser = await userModel
@@ -116,7 +115,6 @@ const uploadAvatar = asyncHandler(async (req, res) => {
     )
     .select("-password -refreshToken");
 
-   console.log("new", updatedUser.avatar)
 
   return res
     .status(200)
@@ -151,7 +149,6 @@ const currUser = asyncHandler(async (req, res) => {
 
 const recheck = asyncHandler(async (req, res) => {
   if (req.cookies?.accessToken) {
-    console.log("ok");
     res.send("userConfirmed");
   } else {
     console.log("not ok");

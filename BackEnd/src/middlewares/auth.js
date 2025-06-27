@@ -56,8 +56,6 @@ const auth = asyncHandler(async (req, res, next) => {
 
                 req.user = user;
 
-                console.log("Tokens refreshed successfully");
-
                 return next();
             } catch (refreshError) {
                 return res.status(401).json({ message: "Authentication required. Please log in." });

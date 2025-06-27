@@ -21,7 +21,6 @@ function Header({ setShowSideBar, setResult }) {
     const query = inpRef?.current?.value;
     let resp = await axios.get(`/api/video/searchVideos/${query}`);
     if (resp) {
-      console.log(resp.data.data)
       setResult(resp.data.data);
       setSuggestion([]);
       setShowSearchBar(false);
@@ -54,7 +53,6 @@ function Header({ setShowSideBar, setResult }) {
     } else if (suggestion?.username) {
       let resp = await axios.get(`/api/user/getChannel/${suggestion._id}`);
       if (resp.data.success) {
-        console.log(resp.data.data)
         let Channel=resp.data?.data[0]
         const avatar = Channel.avatar ||  "/src/assets/defaultAvatar.png"
         navigate(

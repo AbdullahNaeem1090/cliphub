@@ -17,7 +17,6 @@ function PlaylistBox({
   playlist,
   createPlaylistOption,
 }) {
-  console.log(videoId);
 
   const [isPlaylistNameInpVisible, setIsPlaylistNameInpVisible] =
     useState(false);
@@ -51,7 +50,6 @@ function PlaylistBox({
   }
 
   async function updatePlaylist(add, playlistId, category, videoId) {
-    console.log(playlistId,"this")
     try {
       let resp;
       if (add) {

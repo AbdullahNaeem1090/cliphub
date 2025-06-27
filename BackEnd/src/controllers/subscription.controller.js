@@ -22,7 +22,6 @@ const unSubscribe = asyncHandler(async (req, res) => {
   return res.json(new ApiResponse(200, doc, "UnSubscribed"));
 });
 const subscribedChannels = asyncHandler(async (req, res) => {
-  console.log("called");
   const { subscriber } = req.params;
 
   if (!subscriber) {
@@ -73,7 +72,6 @@ const subscribedChannels = asyncHandler(async (req, res) => {
 
   ]);
 
-  console.log(channels);
   return res.json(new ApiResponse(200, channels, "channel sent", true));
 });
 

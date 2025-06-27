@@ -76,7 +76,6 @@ function VideoSection({
     );
     if (currVideoIndex == playlistVideos.length - 1) return;
     let nextVideoId = playlistVideos[currVideoIndex + 1]._id;
-    console.log(currVideoIndex, nextVideoId);
 
     try {
       let resp = await axios.get(

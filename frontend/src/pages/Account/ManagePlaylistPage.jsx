@@ -61,7 +61,6 @@ export default function PlaylistManager() {
       if (resp.data.success) {
         setSelectedPlaylistVideos(resp.data.data);
       }
-      console.log(resp);
     } catch (error) {
       console.log(error);
     }
@@ -220,7 +219,6 @@ export default function PlaylistManager() {
         playlistId: selectedPlaylist._id,
         videoIds: selectedIds,
       });
-      console.log(resp1);
       if (resp1.data.success) {
         let data = {
           category: selectedPlaylist.category,
@@ -238,7 +236,6 @@ export default function PlaylistManager() {
         let resp2 = await axios.post("/api/video/deleteManyVideos", {
           videoIds: selectedIds,
         });
-        console.log(resp2.data)
         if (resp2.data.success) {
           CustomToast(dispatch, "Deletion Completed");
           dispatch(removeVideoFromPLCollection({videoIds:selectedIds}))

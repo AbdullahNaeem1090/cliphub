@@ -43,9 +43,6 @@ export default function LoginPage() {
         }
     }
 
-console.log(isAuthenticated,isAuthenticating)
-
-
     return (
             <div className={loginPageUI.bgDiv}>
                 <div className='flex space-x-3 bg-slate-300 px-4 py-4 rounded-3xl bg-opacity-60 '>

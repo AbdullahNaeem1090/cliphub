@@ -41,8 +41,6 @@ function ProfilePic() {
       setWaiter(true);
       const resp = await axios.post("/api/user/avatarUpload", formadata);
  
-      console.log(resp);
-
       if (resp) {
         setWaiter(false);
         setDone(true);

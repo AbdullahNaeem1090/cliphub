@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 function Settings() {
     // const { setIsAuthenticated } = useAuth()
-    console.log("setting rendered")
 
     const navigate = useNavigate()
     const [showLogOut, setShowLogOut] = useState(true)

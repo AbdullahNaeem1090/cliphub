@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated,isAuthenticating } = useAuth();
 
-  console.log("protecct",isAuthenticated,isAuthenticating)
 
   if(isAuthenticating){
     return <p>laoding</p>

@@ -16,10 +16,8 @@ function WatchHistory() {
   const [videoId, setVideoId] = useState(""); //2
   const [dropDownId, setDropDownId] = useState(""); //2
   const { _private: playlist } = useSelector((state) => state.playlist);
-  console.log(playlist);
 
   async function removeFromHistory(id) {
-    console.log(id);
     let resp = await axios.delete(
       `/api/watchHistory/deleteVideoFromHistory/${id}`
     );

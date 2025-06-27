@@ -3,7 +3,6 @@ import { useAuth } from "../protection/useAuth";
 
 // import axios from "axios";
 function AccountLayout() {
-  console.log("Account Rendered");
 
   const {currUser} =useAuth()
 

@@ -15,7 +15,6 @@ import mongoose from "mongoose";
 
 export function get_PublicId_From_URL(url) {
   const publicId = url.split("/").pop().split(".")[0];
-  console.log(publicId);
   return publicId;
 }
 
@@ -42,7 +41,6 @@ const uploadVideo = asyncHandler(async (req, res) => {
   const videoUploaded = await uploadOnCloudinary(vidUrl);
   const picUploaded = await uploadOnCloudinary(picUrl);
 
-  console.log(videoUploaded);
 
   if (!(videoUploaded?.url && picUploaded?.url)) {
     return res
@@ -101,7 +99,6 @@ const deleteGarbageVideos = asyncHandler(async (req, res) => {
       })
       .limit(2);
 
-    console.log(videos);
 
     let thumbnailArray_Of_PublicIds = [];
     let videoArray_Of_PublicIds = [];
@@ -122,10 +119,6 @@ const deleteGarbageVideos = asyncHandler(async (req, res) => {
       _id: { $in: videos.map((video) => video._id) },
     });
 
-    console.log(
-      `${deleteResult.deletedCount} video(s) were deleted from the database.`
-    );
-
     return res.status(200).json({
       message: "Videos deleted successfully",
       deletedCount: deleteResult.deletedCount,
@@ -143,7 +136,6 @@ const getUserVideos = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Id missing" });
   }
 
-  console.log(userId);
 
   const myVideos = await videoModel
     .find({ owner: userId, isVerified: true })
@@ -418,7 +410,6 @@ const searchedVideos = asyncHandler(async (req, res) => {
 
 const editVideo = async (req, res) => {
   try {
-console.log("called one");
 
     const updateFields = {};
 
@@ -434,11 +425,9 @@ console.log("called one");
         );
       }
 
-      console.log(req.file.path);
       const picUploaded = await uploadOnCloudinary(req.file.path);
       updateFields.thumbnail = picUploaded.url;
     }
-console.log("called mid");
     const updatedVideo = await videoModel.findByIdAndUpdate(
       req.params.id,
       { $set: updateFields },
@@ -477,10 +466,6 @@ const deleteMultipleVieos = asyncHandler(async (req, res) => {
     const deleteResult = await videoModel.deleteMany({
       _id: { $in: videos.map((video) => video._id) },
     });
-
-    console.log(
-      `${deleteResult.deletedCount} video(s) were deleted from the database.`
-    );
 
     return res
       .status(200)

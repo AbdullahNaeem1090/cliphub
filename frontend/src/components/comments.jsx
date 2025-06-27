@@ -65,7 +65,6 @@ function Comments() {
   async function postReply(ParentComment_id, author) {
     let rep_comment = replyRef.current.value;
     if (!rep_comment) return;
-    console.log(ParentComment_id, author, rep_comment);
     try {
       let resp = await axios.post("/api/replyComments/postReply", {
         ParentComment_id,
@@ -73,7 +72,6 @@ function Comments() {
         author,
       });
       if (resp.data.success) {
-        console.log(resp.data.data)
         dispatch(
           addReply({ commentId: ParentComment_id, reply: resp.data.data })
         );

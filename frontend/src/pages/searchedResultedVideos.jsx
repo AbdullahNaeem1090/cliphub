@@ -8,7 +8,6 @@ import { useState } from "react";
 import PlaylistBox from "../components/playListManagerBox";
 
 function SearchResultVideosPage() {
-  console.log("searh rendered");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

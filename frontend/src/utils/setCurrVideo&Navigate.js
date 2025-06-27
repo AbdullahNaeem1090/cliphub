@@ -6,7 +6,6 @@ import { setPlaylistData } from "../slices/playlistSlice";
 
 export async function navigateToVideoPage(videoId,CurrUserId,dispatch,navigate) {
     try {
-      console.log(videoId,CurrUserId,dispatch,navigate);
       let resp = await axios.get(`/api/video/getPlayingVideoData/${videoId}/${CurrUserId}`);
       dispatch(setCurrentVideo(resp.data.data));
       navigate("./wvp");

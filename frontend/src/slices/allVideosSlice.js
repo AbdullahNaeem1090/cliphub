@@ -21,7 +21,6 @@ export const allVideosSlice = createSlice({
             state.gatheredVideos.unshift(action.payload)
         },
         removeVideoFromHomePage:(state,action)=>{
-            console.log(action.payload)
             state.gatheredVideos=state.gatheredVideos.filter(video=>video._id!=action.payload )
         }
 

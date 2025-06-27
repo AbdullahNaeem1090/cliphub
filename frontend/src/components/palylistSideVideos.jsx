@@ -37,7 +37,6 @@ function PlaylistSideVideos({ setPlaylistVideos }) {
       try {
         const resp = await axios.get(`/api/playlist/playlistVideos/${playlistId}`);
         const fetched = resp.data.data
-        console.log(fetched)
         setVideos(fetched);
         setPlaylistVideos(fetched);
       } catch (err) {
@@ -79,7 +78,6 @@ function PlaylistSideVideos({ setPlaylistVideos }) {
       }
     }
   };
-console.log(videos)
   if (loading) return <p>Loading...</p>;
 
   return (

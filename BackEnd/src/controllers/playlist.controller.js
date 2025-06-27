@@ -215,7 +215,6 @@ const reOrderVideos = async (req, res) => {
       { new: true }
     );
 
-    console.log(updatedPlaylist);
 
     res.status(200).json({ message: "Playlist order updated" });
   } catch (err) {
@@ -224,7 +223,6 @@ const reOrderVideos = async (req, res) => {
 };
 
 const reNamePlaylist = async (req, res) => {
-  console.log("called");
   const { playlistId, newName } = req.body;
 
   if (!playlistId || !newName) {

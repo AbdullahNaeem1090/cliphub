@@ -53,7 +53,6 @@ function MyPlaylist() {
   const [playListThumbnail, setPlaylistThumbnail] = useState({});
 
   async function getPlaylistThumbnail(playlistId) {
-    console.log("first");
     try {
       let resp = await axios.get(`/api/playlist/getPLThumbnail/${playlistId}`);
       if (resp.data.success) {
