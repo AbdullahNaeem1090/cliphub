@@ -16,6 +16,10 @@ app.use(cors({
     credentials: true
 }))
 
+app.get('/',(req,res)=>{
+    res.send("healthy")
+})
+
 import router from './routes/userRoute.js'
 app.use("/api/user",router)
 
