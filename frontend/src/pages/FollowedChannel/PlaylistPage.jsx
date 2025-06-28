@@ -1,10 +1,11 @@
 import { useDispatch } from "react-redux";
-import axios from "axios";
+
 import { useNavigate, useParams } from "react-router-dom";
 import PlaylistCard from "../../components/playlistCard";
 import { useEffect, useState } from "react";
 import { setCurrentVideo } from "../../slices/currentVideoSlice";
 import { useAuth } from "../../protection/useAuth";
+import { myAxios } from "../../utils/axiosInstance";
 
 function SubscribedChannelPlaylists() {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ function SubscribedChannelPlaylists() {
 
   async function getPlaylists() {
     try {
-      let resp = await axios.get(`/api/playlist/getPlaylists/${channelId}`);
+      let resp = await myAxios.get(`/api/playlist/getPlaylists/${channelId}`);
       let data=resp.data.data
       let pubicPlaylists = data?.filter((obj) => obj._id == "public");
       setPlaylistVideos(pubicPlaylists[0]?.docs||[])
@@ -33,7 +34,7 @@ function SubscribedChannelPlaylists() {
 
   async function getPlaylistThumbnail(playlistId) {
     try {
-      let resp = await axios.get(`/api/playlist/getPLThumbnail/${playlistId}`);
+      let resp = await myAxios.get(`/api/playlist/getPLThumbnail/${playlistId}`);
       if (resp.data.success) {
         return resp.data.data;
       }
@@ -62,7 +63,7 @@ function SubscribedChannelPlaylists() {
        return
      }
      try {
-       let resp = await axios.get(`/api/video/getPlayingVideoData/${videoId}/${currUser._id}`);
+       let resp = await myAxios.get(`/api/video/getPlayingVideoData/${videoId}/${currUser._id}`);
        dispatch(setCurrentVideo(resp.data.data));
        navigate(`/main/watchPlaylist/${playlistId}/false`)
      } catch (error) {

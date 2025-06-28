@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
-import axios from "axios";
 import PropTypes from "prop-types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { myAxios } from "../utils/axiosInstance";
 
 function EditForm({ showForm, setShowForm, editVideoId }) {
   const [formData, setFormData] = useState({
@@ -27,7 +27,7 @@ function EditForm({ showForm, setShowForm, editVideoId }) {
     if (formData.description) payload.append("description", formData.description);
     if (formData.image) payload.append("thumbnail", formData.image);
 
-    const res = await axios.put(`/api/video/editVideo/${editVideoId}`, payload);
+    const res = await myAxios.put(`/api/video/editVideo/${editVideoId}`, payload);
     return res.data;
   };
 

@@ -2,10 +2,11 @@ import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 import { newComerVideo } from "../../slices/allVideosSlice";
-import axios from "axios";
+
 import { CustomToast } from "../../utils/showUtils";
 import { finishProgress, showProgress } from "../../slices/videoUploadSlice";
 import { useAuth } from "../../protection/useAuth";
+import { myAxios } from "../../utils/axiosInstance";
 
 function UploadVideo() {
   const dispatch = useDispatch();
@@ -54,14 +55,14 @@ function UploadVideo() {
     try {
       dispatch(showProgress());
 
-      let resp = await axios.post("/api/video/uploadVideo", formData, {
+      let resp = await myAxios.post("/api/video/uploadVideo", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         signal,
       });
       if (resp) {
-        let re = await axios.get(
+        let re = await myAxios.get(
           `/api/video/setVerifyTrue/${resp.data.data._id}`
         );
         console.log(re);
@@ -79,7 +80,7 @@ function UploadVideo() {
         );
       }
     } catch (error) {
-      if (axios.isCancel(error)) {
+      if (myAxios.isCancel(error)) {
         console.log("Upload canceled by user!");
       }
       dispatch(finishProgress());

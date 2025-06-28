@@ -1,14 +1,15 @@
 // import { useState } from "react";
-import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../protection/useAuth";
+import { myAxios } from "../utils/axiosInstance";
 
 function Subscription() {
   const { currUser } = useAuth();
 
   async function getSubscribedChannels() {
-    let resp = await axios.get(
+    let resp = await myAxios.get(
       `/api/subscription/subscribedChannels/${currUser._id}`
     );
     return resp.data.data;
@@ -23,7 +24,7 @@ function Subscription() {
   const navigate = useNavigate();
 
   async function unSubscribe(id) {
-      await axios.post("/api/subscription/unSubscribe", {
+      await myAxios.post("/api/subscription/unSubscribe", {
       subscriber: currUser._id,
       subscribedTo: id,
     });

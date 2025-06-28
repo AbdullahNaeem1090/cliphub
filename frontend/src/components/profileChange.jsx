@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
+
 import { useAuth } from "../protection/useAuth.jsx";
 import { CustomToast } from "../utils/showUtils.js";
 import { useDispatch } from "react-redux";
+import { myAxios } from "../utils/axiosInstance.js";
 
 function ProfilePic() {
   const { currUser } = useAuth();
@@ -39,7 +40,7 @@ function ProfilePic() {
 
     try {
       setWaiter(true);
-      const resp = await axios.post("/api/user/avatarUpload", formadata);
+      const resp = await myAxios.post("/api/user/avatarUpload", formadata);
  
       if (resp) {
         setWaiter(false);

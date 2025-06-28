@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import { setCurrentVideo } from "../../slices/currentVideoSlice";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
@@ -8,6 +8,7 @@ import { useAuth } from "../../protection/useAuth";
 import VideoBox from "../../components/videoBox";
 import PlaylistBox from "../../components/playListManagerBox";
 import { useState } from "react";
+import { myAxios } from "../../utils/axiosInstance";
 
 function SubscribedChannelVideos() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ function SubscribedChannelVideos() {
   
 
   async function getVideos() {
-    let resp = await axios.get(`/api/video/userVideos/${channelId}`);
+    let resp = await myAxios.get(`/api/video/userVideos/${channelId}`);
     return resp.data.data;
   }
   const { data, isLoading, error } = useQuery({
@@ -34,7 +35,7 @@ function SubscribedChannelVideos() {
 
   async function navigateToVideoPage(videoId) {
     try {
-      let resp = await axios.get(
+      let resp = await myAxios.get(
         `/api/video/getPlayingVideoData/${videoId}/${currUser._id}`
       );
       dispatch(setCurrentVideo(resp.data.data));

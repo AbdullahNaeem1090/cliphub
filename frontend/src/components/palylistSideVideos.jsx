@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentVideo } from "../slices/currentVideoSlice";
 import { useAuth } from "../protection/useAuth";
@@ -6,7 +5,6 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import SidebarVideoCard from "./smallVideoBox";
-
 import {
   DndContext,
   closestCenter,
@@ -19,6 +17,7 @@ import {
   arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { myAxios } from "../utils/axiosInstance";
 
 function PlaylistSideVideos({ setPlaylistVideos }) {
   const params = useParams();
@@ -35,7 +34,7 @@ function PlaylistSideVideos({ setPlaylistVideos }) {
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
-        const resp = await axios.get(`/api/playlist/playlistVideos/${playlistId}`);
+        const resp = await myAxios.get(`/api/playlist/playlistVideos/${playlistId}`);
         const fetched = resp.data.data
         setVideos(fetched);
         setPlaylistVideos(fetched);
@@ -51,7 +50,7 @@ function PlaylistSideVideos({ setPlaylistVideos }) {
 
   const changeVideo = async (videoId) => {
     try {
-      const resp = await axios.get(
+      const resp = await myAxios.get(
         `/api/video/getPlayingVideoData/${videoId}/${currUser._id}`
       );
       dispatch(setCurrentVideo(resp.data.data));
@@ -72,7 +71,7 @@ function PlaylistSideVideos({ setPlaylistVideos }) {
 
       try {
         const orderedIds = reordered.map((v) => v._id);
-        await axios.put(`/api/playlist/reOrder/${playlistId}`, { orderedIds });
+        await myAxios.put(`/api/playlist/reOrder/${playlistId}`, { orderedIds });
       } catch (error) {
         console.log("Reorder failed", error);
       }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Trash2, Edit, Save, Plus, EyeOff, Eye } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
+
 import {
   DndContext,
   closestCenter,
@@ -27,6 +27,7 @@ import { setCurrentVideo } from "../../slices/currentVideoSlice";
 import { useAuth } from "../../protection/useAuth";
 import { useNavigate } from "react-router-dom";
 import { CustomToast } from "../../utils/showUtils";
+import { myAxios } from "../../utils/axiosInstance";
 
 export default function PlaylistManager() {
   const { _public, _hidden } = useSelector((state) => state.playlist);
@@ -55,7 +56,7 @@ export default function PlaylistManager() {
     setSelectedPlaylist(playlist);
     setNewPlaylistName(playlist.title);
     try {
-      const resp = await axios.get(
+      const resp = await myAxios.get(
         `/api/playlist/playlistVideos/${playlist._id}`
       );
       if (resp.data.success) {
@@ -72,7 +73,7 @@ export default function PlaylistManager() {
 
   const DeletePlaylist = async () => {
     try {
-      let resp = await axios.delete(
+      let resp = await myAxios.delete(
         `/api/playlist/deletePlaylist/${selectedPlaylist._id}`
       );
       if (resp.data.success) {
@@ -99,7 +100,7 @@ export default function PlaylistManager() {
       category: selectedPlaylist.category,
     };
 
-    let resp = await axios.put("/api/playlist/reName", data);
+    let resp = await myAxios.put("/api/playlist/reName", data);
     if (resp.data.success) {
       setDisplayInput(false);
       dispatch(renamePlaylist(data));
@@ -159,7 +160,7 @@ export default function PlaylistManager() {
 
       try {
         const orderedIds = reordered.map((v) => v._id);
-        await axios.put(`/api/playlist/reOrder/${selectedPlaylist._id}`, {
+        await myAxios.put(`/api/playlist/reOrder/${selectedPlaylist._id}`, {
           orderedIds,
         });
       } catch (error) {
@@ -174,7 +175,7 @@ export default function PlaylistManager() {
       return;
     }
     try {
-      let resp = await axios.post("/api/playlist/createMyPlaylist", {
+      let resp = await myAxios.post("/api/playlist/createMyPlaylist", {
         title: newPlaylistName,
         category: "public",
       });
@@ -193,7 +194,7 @@ export default function PlaylistManager() {
 
   async function changePlaylistCategory(playlistId, oldCategory) {
     let newCategory = oldCategory === "hidden" ? "public" : "hidden";
-    let resp = await axios.put("/api/playlist/changeCategory", { playlistId });
+    let resp = await myAxios.put("/api/playlist/changeCategory", { playlistId });
     if (resp.data.success) {
       let data = {
         playlistId,
@@ -215,7 +216,7 @@ export default function PlaylistManager() {
     if (!selectedIds.length) return;
 
     try {
-      let resp1 = await axios.put("/api/playlist/removeMultipleVideos", {
+      let resp1 = await myAxios.put("/api/playlist/removeMultipleVideos", {
         playlistId: selectedPlaylist._id,
         videoIds: selectedIds,
       });
@@ -233,7 +234,7 @@ export default function PlaylistManager() {
         setSelectAllChecked(false);
       }
       if (deleteActive) {
-        let resp2 = await axios.post("/api/video/deleteManyVideos", {
+        let resp2 = await myAxios.post("/api/video/deleteManyVideos", {
           videoIds: selectedIds,
         });
         if (resp2.data.success) {
@@ -255,7 +256,7 @@ export default function PlaylistManager() {
       return;
     }
     try {
-      let resp = await axios.get(
+      let resp = await myAxios.get(
         `/api/video/getPlayingVideoData/${videoId}/${currUser._id}`
       );
       dispatch(setCurrentVideo(resp.data.data));

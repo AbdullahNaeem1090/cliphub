@@ -1,7 +1,7 @@
 import { useNavigate, useOutletContext } from "react-router-dom"
 import { useDispatch } from "react-redux"
-import axios from "axios"
 import { setCurrentVideo } from "../slices/currentVideoSlice"
+import { myAxios } from "../utils/axiosInstance"
 
 
 function SearchResultVideosPage() {
@@ -12,7 +12,7 @@ function SearchResultVideosPage() {
     const result = useOutletContext()
 
     async function navigateToVideoPage(videoId) {
-        let resp = await axios.get(`/api/video/playVideo/${videoId}`)
+        let resp = await myAxios.get(`/api/video/playVideo/${videoId}`)
         if (resp) {
             dispatch(setCurrentVideo(resp.data.data))
             navigate("/main/wvp")

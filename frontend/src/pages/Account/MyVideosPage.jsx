@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../protection/useAuth";
@@ -10,6 +10,7 @@ import VideoBox from "../../components/videoBox";
 import { CustomToast } from "../../utils/showUtils";
 import EditForm from "../../components/editForm";
 import { removeVideoFromPLCollection } from "../../slices/playlistSlice";
+import { myAxios } from "../../utils/axiosInstance";
 
 function MyVideos() {
   const queryClient = useQueryClient();
@@ -27,7 +28,7 @@ function MyVideos() {
 
   async function getMyVideos() {
     try {
-      let resp = await axios.get(`/api/video/userVideos/${currUser._id}`);
+      let resp = await myAxios.get(`/api/video/userVideos/${currUser._id}`);
       return resp.data.data;
     } catch (error) {
       console.log(error);
@@ -35,7 +36,7 @@ function MyVideos() {
   }
 
   const deleteItem = async (videoId) => {
-    let resp = await axios.delete(`/api/video/delVideo/${videoId}`);
+    let resp = await myAxios.delete(`/api/video/delVideo/${videoId}`);
     return resp.data.data;
   };
 
@@ -79,7 +80,7 @@ function MyVideos() {
   }
   async function navigateToVideoPage(videoId, CurrUserId) {
     try {
-      let resp = await axios.get(
+      let resp = await myAxios.get(
         `/api/video/getPlayingVideoData/${videoId}/${CurrUserId}`
       );
       dispatch(setCurrentVideo(resp.data.data));

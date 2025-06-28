@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -10,6 +10,7 @@ import {
 } from "../slices/currentVideoSlice";
 import { CustomToast } from "../utils/showUtils";
 import { useAuth } from "../protection/useAuth";
+import { myAxios } from "../utils/axiosInstance";
 
 function Comments() {
   const currVideo = useSelector((state) => state.currentVideo);
@@ -31,7 +32,7 @@ function Comments() {
   async function postComment(author, Commented_Video_id) {
     let comment = commentRef.current.value;
     try {
-      let resp = await axios.post("/api/comment/post", {
+      let resp = await myAxios.post("/api/comment/post", {
         author,
         Commented_Video_id,
         comment,
@@ -53,7 +54,7 @@ function Comments() {
 
   async function deleteComment(commentId) {
     try {
-      let resp1 = await axios.delete(`/api/comment/removeComment/${commentId}`);
+      let resp1 = await myAxios.delete(`/api/comment/removeComment/${commentId}`);
       if (resp1.data.success) {
         dispatch(remComment({ commentId }));
       }
@@ -66,7 +67,7 @@ function Comments() {
     let rep_comment = replyRef.current.value;
     if (!rep_comment) return;
     try {
-      let resp = await axios.post("/api/replyComments/postReply", {
+      let resp = await myAxios.post("/api/replyComments/postReply", {
         ParentComment_id,
         rep_comment,
         author,
@@ -89,7 +90,7 @@ function Comments() {
     setRepButtonId(commentId);
     setShowReplies((prev) => !prev);
     try {
-      let resp = await axios.get(`/api/replyComments/getReplies/${commentId}`);
+      let resp = await myAxios.get(`/api/replyComments/getReplies/${commentId}`);
       if (resp.data.success) {
         if (resp.data.data.length) {
           dispatch(addReplies({ commentId, replies: resp.data.data }));
@@ -106,7 +107,7 @@ function Comments() {
 
   async function deleteReply(commentId, replyId) {
     try {
-      let resp = await axios.delete(
+      let resp = await myAxios.delete(
         `/api/replyComments/deleteReply/${replyId}`
       );
       if (resp.data.success) {

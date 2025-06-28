@@ -1,12 +1,13 @@
-import axios from "axios";
+
 import { setCurrentVideo } from "../slices/currentVideoSlice";
 import { setPlaylistData } from "../slices/playlistSlice";
+import { myAxios } from "./axiosInstance";
 
 
 
 export async function navigateToVideoPage(videoId,CurrUserId,dispatch,navigate) {
     try {
-      let resp = await axios.get(`/api/video/getPlayingVideoData/${videoId}/${CurrUserId}`);
+      let resp = await myAxios.get(`/api/video/getPlayingVideoData/${videoId}/${CurrUserId}`);
       dispatch(setCurrentVideo(resp.data.data));
       navigate("./wvp");
     } catch (error) {
@@ -16,7 +17,7 @@ export async function navigateToVideoPage(videoId,CurrUserId,dispatch,navigate) 
 
  export async function getUserPlaylists(dispatch,currUser){
     try {
-      let resp=await axios.get(`/api/playlist/getPlaylists/${currUser}`)
+      let resp=await myAxios.get(`/api/playlist/getPlaylists/${currUser}`)
       if(resp.data.success){
         let data=resp.data.data
         let _private=data.filter((playlist) => playlist._id === "private")[0]?.docs || []

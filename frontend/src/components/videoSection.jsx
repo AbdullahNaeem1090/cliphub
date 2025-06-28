@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
-import axios from "axios";
+
 import {
   addLike,
   addSubscribe,
@@ -13,6 +13,7 @@ import { CustomToast } from "../utils/showUtils";
 import { useAuth } from "../protection/useAuth";
 import Comments from "./comments";
 import { Copy } from "lucide-react";
+import { myAxios } from "../utils/axiosInstance";
 
 function VideoSection({
   currVideo,
@@ -25,7 +26,7 @@ function VideoSection({
   const { currUser } = useAuth();
 
   async function unSubscribe() {
-    let resp = await axios.post("/api/subscription/unSubscribe", {
+    let resp = await myAxios.post("/api/subscription/unSubscribe", {
       subscriber: currUser._id,
       subscribedTo: currVideo.VideoCreator._id,
     });
@@ -36,7 +37,7 @@ function VideoSection({
   }
 
   async function subscribe() {
-    let resp = await axios.post("/api/subscription/subscribe", {
+    let resp = await myAxios.post("/api/subscription/subscribe", {
       subscriber: currUser._id,
       subscribedTo: currVideo.VideoCreator._id,
     });
@@ -49,7 +50,7 @@ function VideoSection({
     let resp;
     try {
       if (!doLike) {
-        resp = await axios.post(`/api/like/addLike`, {
+        resp = await myAxios.post(`/api/like/addLike`, {
           videoId: videoId,
           userId: userId,
         });
@@ -57,7 +58,7 @@ function VideoSection({
           dispatch(addLike());
         }
       } else {
-        resp = await axios.post(`/api/like/removeLike`, {
+        resp = await myAxios.post(`/api/like/removeLike`, {
           videoId: videoId,
           userId: userId,
         });
@@ -78,7 +79,7 @@ function VideoSection({
     let nextVideoId = playlistVideos[currVideoIndex + 1]._id;
 
     try {
-      let resp = await axios.get(
+      let resp = await myAxios.get(
         `/api/video/getPlayingVideoData/${nextVideoId}/${currUser._id}`
       );
       dispatch(setCurrentVideo(resp.data.data));

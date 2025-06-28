@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import { setCurrentVideo } from "../slices/currentVideoSlice";
 // import { deletePlaylist } from "../slices/playlistSlice";
@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import PlaylistCard from "../components/playlistCard";
 import { useAuth } from "../protection/useAuth";
 import { removePlaylist } from "../slices/playlistSlice";
+import { myAxios } from "../utils/axiosInstance";
 
 function MyPlaylist() {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ function MyPlaylist() {
       return;
     }
     try {
-      let resp = await axios.get(
+      let resp = await myAxios.get(
         `/api/video/getPlayingVideoData/${videoId}/${currUser._id}`
       );
       dispatch(setCurrentVideo(resp.data.data));
@@ -36,7 +37,7 @@ function MyPlaylist() {
   }
   const DeletePlaylist = async (id) => {
     try {
-      let resp = await axios.delete(`/api/playlist/deletePlaylist/${id}`);
+      let resp = await myAxios.delete(`/api/playlist/deletePlaylist/${id}`);
       if (resp.data.success) {
         dispatch(
           removePlaylist({
@@ -54,7 +55,7 @@ function MyPlaylist() {
 
   async function getPlaylistThumbnail(playlistId) {
     try {
-      let resp = await axios.get(`/api/playlist/getPLThumbnail/${playlistId}`);
+      let resp = await myAxios.get(`/api/playlist/getPLThumbnail/${playlistId}`);
       if (resp.data.success) {
         return resp.data.data;
       }

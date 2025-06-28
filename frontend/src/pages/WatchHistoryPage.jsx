@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentVideo } from "../slices/currentVideoSlice";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import { useEffect, useState } from "react";
 import { useAuth } from "../protection/useAuth";
 import VideoBox2 from "../components/videoBox2";
 import PlaylistBox from "../components/playListManagerBox";
+import { myAxios } from "../utils/axiosInstance";
 
 function WatchHistory() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ function WatchHistory() {
   const { _private: playlist } = useSelector((state) => state.playlist);
 
   async function removeFromHistory(id) {
-    let resp = await axios.delete(
+    let resp = await myAxios.delete(
       `/api/watchHistory/deleteVideoFromHistory/${id}`
     );
     if (resp.data.success) {
@@ -26,14 +27,14 @@ function WatchHistory() {
     }
   }
   async function clearHistory() {
-    let resp = await axios.delete(`/api/watchHistory/clear/${currUser._id}`);
+    let resp = await myAxios.delete(`/api/watchHistory/clear/${currUser._id}`);
     if (resp.data.success) {
       setHistory([]);
     }
   }
 
   async function navigateToVideoPage(videoId) {
-    let resp = await axios.get(
+    let resp = await myAxios.get(
       `/api/video/getPlayingVideoData/${videoId}/${currUser._id}`
     );
     if (resp) {
@@ -43,7 +44,7 @@ function WatchHistory() {
   }
 
   async function getWatchHistory() {
-    let resp = await axios.get(`/api/watchHistory/getHistory/${currUser._id}`);
+    let resp = await myAxios.get(`/api/watchHistory/getHistory/${currUser._id}`);
     if (resp.data.success) {
       setHistory(resp.data.data);
     }

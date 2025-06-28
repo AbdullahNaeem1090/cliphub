@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { INPUT, signUpPageUI } from "../UI.js";
 import { useNavigate } from 'react-router-dom';
 import {  useState } from "react";
-import axios from 'axios';
+import { myAxios } from "../utils/axiosInstance.js";
 
 
 export default function SignUpPage() {
@@ -17,7 +17,7 @@ export default function SignUpPage() {
 
   async function onsubmit(signUpData) {
     try {
-      let resp = await axios.post("/api/user/signUp", signUpData);
+      let resp = await myAxios.post("/api/user/signUp", signUpData);
 
       if (resp.data.message === "User registered Successfully") {
         setErrorMsg("");

@@ -2,11 +2,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { loginPageUI, INPUT } from "../UI.js";
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
+
 import { useDispatch } from "react-redux";
 import { useAuth } from "../protection/useAuth.jsx";
 
 import { getUserPlaylists } from "../utils/setCurrVideo&Navigate.js";
+import { myAxios } from "../utils/axiosInstance.js";
 
 export default function LoginPage() {
     const { setIsAuthenticated,setCurrUser,isAuthenticated,isAuthenticating } = useAuth();
@@ -26,7 +27,7 @@ export default function LoginPage() {
 
     async function onsubmit(logInData) {
         try {
-            let response = await axios.post("/api/user/logIn", logInData);
+            let response = await myAxios.post("/api/user/logIn", logInData);
             console.log(response)
             if (response.data.success) {
                 setIsAuthenticated(true);

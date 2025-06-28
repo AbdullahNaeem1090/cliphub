@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -8,11 +8,12 @@ import { useAuth } from "../protection/useAuth";
 import { navigateToVideoPage } from "../utils/setCurrVideo&Navigate";
 import VideoBox from "../components/videoBox";
 import PlaylistBox from "../components/playListManagerBox";
+import { myAxios } from "../utils/axiosInstance";
 
 
 async function fetchHomePageVideos({ pageParam }) {
   if (!pageParam) pageParam = "";
-  let response = await axios.get(`/api/video/getnewVideos/${pageParam}`);
+  let response = await myAxios.get(`/api/video/getnewVideos/${pageParam}`);
   return response.data.data;
 }
 

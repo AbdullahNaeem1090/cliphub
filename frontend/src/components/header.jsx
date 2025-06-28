@@ -1,10 +1,10 @@
 import { useState, useRef } from "react";
 import { useAuth } from "../protection/useAuth";
-import axios from "axios";
 import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 import { setCurrentVideo } from "../slices/currentVideoSlice";
 import { useDispatch } from "react-redux";
+import { myAxios } from "../utils/axiosInstance";
 
 function Header({ setShowSideBar, setResult }) {
 
@@ -19,7 +19,7 @@ function Header({ setShowSideBar, setResult }) {
 
   async function navigateToSuggestedVideos() {
     const query = inpRef?.current?.value;
-    let resp = await axios.get(`/api/video/searchVideos/${query}`);
+    let resp = await myAxios.get(`/api/video/searchVideos/${query}`);
     if (resp) {
       setResult(resp.data.data);
       setSuggestion([]);
@@ -32,7 +32,7 @@ function Header({ setShowSideBar, setResult }) {
     if (e.target.value == "") {
       setSuggestion([]);
     }
-    let resp = await axios.get(`/api/video/search/${e.target.value}`);
+    let resp = await myAxios.get(`/api/video/search/${e.target.value}`);
     setSuggestion(resp?.data.data);
   };
 
@@ -44,14 +44,14 @@ function Header({ setShowSideBar, setResult }) {
 
   async function handleClick(suggestion) {
     if (suggestion?.title) {
-      let resp = await axios.get(`/api/video/getPlayingVideoData/${suggestion._id}/${currUser._id}`);
+      let resp = await myAxios.get(`/api/video/getPlayingVideoData/${suggestion._id}/${currUser._id}`);
       if (resp.data.success) {
         dispatch(setCurrentVideo(resp.data.data))
         navigate("/main/wvp");
         setSuggestion([]);
       }
     } else if (suggestion?.username) {
-      let resp = await axios.get(`/api/user/getChannel/${suggestion._id}`);
+      let resp = await myAxios.get(`/api/user/getChannel/${suggestion._id}`);
       if (resp.data.success) {
         let Channel=resp.data?.data[0]
         const avatar = Channel.avatar ||  "/src/assets/defaultAvatar.png"

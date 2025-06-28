@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom"
 // import { useSelector } from "react-redux"
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { myAxios } from "../utils/axiosInstance";
 // import { useAuth } from "../protection/useAuth";
 
 
@@ -14,7 +14,7 @@ function Settings() {
 
     async function userLogout() {
         try {
-            let res = await axios.post("/api/user/logout")
+            let res = await myAxios.post("/api/user/logout")
             if (res) {
                 // setIsAuthenticated(false)
                 sessionStorage.setItem('auth', JSON.stringify(false));

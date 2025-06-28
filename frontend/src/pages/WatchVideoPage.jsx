@@ -5,7 +5,8 @@ import WatchPageSideVideos from "../components/watchPageSideVideos";
 import PlaylistBox from "../components/playListManagerBox";
 import VideoSection from "../components/videoSection";
 import { useAuth } from "../protection/useAuth";
-import axios from "axios";
+import { myAxios } from "../utils/axiosInstance";
+
 
 function WatchVideoPage() {
   const currVideo = useSelector((state) => state.currentVideo);
@@ -20,7 +21,7 @@ function WatchVideoPage() {
 
  async function addVideoToWatchHistory(){
   try {
-    await axios.post("/api/watchHistory/addVideoToWatchHistory",{
+    await myAxios.post("/api/watchHistory/addVideoToWatchHistory",{
       userId:currUser._id,
       videoId:currVideo._id
     })

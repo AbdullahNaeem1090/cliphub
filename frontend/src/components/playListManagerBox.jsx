@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -9,6 +8,7 @@ import {
   addVideoToPlaylist,
   remVideofromPlaylist,
 } from "../slices/playlistSlice";
+import { myAxios } from "../utils/axiosInstance";
 
 function PlaylistBox({
   openPlayListCard,
@@ -32,7 +32,7 @@ function PlaylistBox({
       category: "private",
     };
     try {
-      let resp = await axios.post(
+      let resp = await myAxios.post(
         "/api/playlist/createMyPlaylist",
         firstvideoForPlaylist
       );
@@ -53,7 +53,7 @@ function PlaylistBox({
     try {
       let resp;
       if (add) {
-        resp = await axios.post("/api/playlist/addVideoToPlaylist", {
+        resp = await myAxios.post("/api/playlist/addVideoToPlaylist", {
           playlistId,
           videoId,
         });
@@ -68,7 +68,7 @@ function PlaylistBox({
           CustomToast(dispatch, "Added");
         }
       } else {
-        resp = await axios.patch(
+        resp = await myAxios.patch(
           `/api/playlist/removeVideo/${videoId}/${playlistId}`
         );
         if (resp.data.success) {

@@ -1,0 +1,19 @@
+node_modules
+
+# Vite build output
+dist/
+
+# Local env vars
+.env
+.env.*.local
+
+# Vite cache
+.vite/
+
+# OS / editor files
+.DS_Store
+*.log
+*.swp
+
+# VSCode settings (optional)
+.vscode/

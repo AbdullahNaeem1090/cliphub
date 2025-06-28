@@ -1,15 +1,16 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import axios from "axios";
+
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { setCurrentVideo } from "../slices/currentVideoSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useAuth } from "../protection/useAuth";
+import { myAxios } from "../utils/axiosInstance";
 
 function WatchPageSideVideos() {
   async function fetchHomePageVideos({ pageParam }) {
     if (!pageParam) pageParam = "";
-    let response = await axios.get(`/api/video/getnewVideos/${pageParam}`);
+    let response = await myAxios.get(`/api/video/getnewVideos/${pageParam}`);
     return response.data.data;
   }
 
@@ -37,7 +38,7 @@ function WatchPageSideVideos() {
 
   async function changeVideo(videoId) {
     try {
-      let resp = await axios.get(
+      let resp = await myAxios.get(
         `/api/video/getPlayingVideoData/${videoId}/${currUser._id}`
       );
       dispatch(setCurrentVideo(resp.data.data));

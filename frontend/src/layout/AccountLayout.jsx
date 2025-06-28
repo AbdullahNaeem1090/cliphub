@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../protection/useAuth";
 
-// import axios from "axios";
+// 
 function AccountLayout() {
 
   const {currUser} =useAuth()

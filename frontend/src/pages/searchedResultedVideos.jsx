@@ -1,11 +1,12 @@
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
+
 import { setCurrentVideo } from "../slices/currentVideoSlice";
 import VideoBox2 from "../components/videoBox2";
 import { useAuth } from "../protection/useAuth";
 import { useState } from "react";
 import PlaylistBox from "../components/playListManagerBox";
+import { myAxios } from "../utils/axiosInstance";
 
 function SearchResultVideosPage() {
 
@@ -34,7 +35,7 @@ function SearchResultVideosPage() {
   }
 
   async function navigateToVideoPage(videoId) {
-    let resp = await axios.get(
+    let resp = await myAxios.get(
       `/api/video/getPlayingVideoData/${videoId}/${currUser._id}`
     );
     if (resp) {

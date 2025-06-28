@@ -1,6 +1,7 @@
-import axios from "axios";
+
 import { createContext, useState, useContext, useEffect } from "react";
 import PropTypes from 'prop-types';
+import { myAxios } from "../utils/axiosInstance";
 
 
 const AuthContext = createContext();
@@ -13,7 +14,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
       const checkAuth = async () => {
         try {
-          const response = await axios.get("/api/user/currUser");
+          const response = await myAxios.get("/api/user/currUser");
           if (response.data.success) {
             setIsAuthenticated(true);
             setCurrUser(response.data.data);

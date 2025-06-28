@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
 import { INPUT } from "../UI";
-import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { CustomToast } from "../utils/showUtils";
+import { myAxios } from "../utils/axiosInstance";
 
 function PassChange() {
     const {
@@ -28,7 +28,7 @@ function PassChange() {
         }
 
         try {
-            const resp = await axios.post("/api/user/changePass", data);
+            const resp = await myAxios.post("/api/user/changePass", data);
 
             if (resp.data.success) {
                 setShowTick(true);
