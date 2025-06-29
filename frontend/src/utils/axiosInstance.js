@@ -1,6 +1,6 @@
 import axios from "axios"
 
 export const myAxios = axios.create({
-  baseURL: 'https://ch.api.masenko.dev',
+  baseURL: 'http://localhost:8000',
     withCredentials: true,
 });

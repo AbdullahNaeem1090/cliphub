@@ -13,7 +13,6 @@ import mongoose from "mongoose";
 // -------------------------------------------
 
 export function get_PublicId_From_URL(url) {
-  console.log(url);
   
   const publicId = url?.split("/").pop()?.split(".")[0];
   return publicId;
@@ -33,7 +32,6 @@ const uploadVideo = asyncHandler(async (req, res) => {
       .json({ message: "Some field is missing", success: false });
   }
 
-  console.log('called uploading 2');
 
 
   const vidUrl = req.files?.vid[0].path;
@@ -45,15 +43,8 @@ const uploadVideo = asyncHandler(async (req, res) => {
       .json({ message: "Uploading file is missing", success: false });
   }
 
-  console.log('called uploading 3');
-
-
   const videoUploaded = await uploadOnCloudinary(vidUrl);
   const picUploaded = await uploadOnCloudinary(picUrl);
-
-
-  console.log('called uploading 4');
-
 
   if (!(videoUploaded?.url && picUploaded?.url)) {
     return res
@@ -62,8 +53,6 @@ const uploadVideo = asyncHandler(async (req, res) => {
   } else {
     console.log("Uploaded");
   }
-
-  console.log('called uploading 5');
 
 
   const creatingVideoDoc = await videoModel.create({

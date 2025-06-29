@@ -49,7 +49,7 @@ import dbConnection from './dataBase/dbConnection.js'
 dbConnection()
 .then(() => {
     app.listen(process.env.PORT,
-    () => console.log("App is listening on port", process.env.PORT||8000))
+    () => console.log("App is listening on port", process.env.PORT||8001))
 }).catch((error) => {
     console.error("Failed to start server:", error);
     process.exit(1);

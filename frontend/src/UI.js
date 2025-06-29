@@ -30,13 +30,14 @@ const INPUT={
             message: 'Invalid email address'
         }
     },
-    userNameValidations:{
-        required: 'Username is required',
-        pattern: {
-            value: /^[a-zA-Z0-9._%+-]{3,20}$/,
-            message: 'Username must be between 3 to 20 characters'
-          }
-    },
+  userNameValidations: {
+  required: 'Username is required',
+  pattern: {
+    value: /^[a-zA-Z0-9_ ]{3,20}$/,
+    message: 'Username must be 3-20 characters, only letters, numbers, spaces, and underscores'
+  }
+}
+
 }
 
 const signUpPageUI={

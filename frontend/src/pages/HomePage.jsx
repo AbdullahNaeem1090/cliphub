@@ -23,7 +23,6 @@ function HomePage() {
   const { ref, inView } = useInView();
   const { currUser } = useAuth();
   const { _private: playlist } = useSelector((state) => state.playlist);
-  console.log(playlist)
 
   let [dropDownId, setDropDownId] = useState("");
   let [openPlayListCard, setOpenPlayListCard] = useState(false);
@@ -56,7 +55,7 @@ function HomePage() {
   if (status === "error") {
     return (
       <div className="sm:ml-56 mt-[20%] flex justify-center items-center my-4">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent">
+        <div className="h-8 w-8  rounded-full border-4 border-blue-500 border-t-transparent">
           {error.message}
         </div>
       </div>
@@ -82,24 +81,25 @@ function HomePage() {
               setDropDownId={setDropDownId}
               setVideoId={setVideoId}
               setOpenPlayListCard={setOpenPlayListCard}
-            actions={["Basic"]}
+              actions={["Basic"]}
 
             />
           ))}
         </div>
-        {hasNextPage && (
+        {hasNextPage && fetchedVideos.length > 0 && (
           <div ref={ref} className="flex justify-center items-center my-4">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+            -
           </div>
         )}
+
       </div>
       <PlaylistBox
-              openPlayListCard={openPlayListCard}
-              setOpenPlayListCard={setOpenPlayListCard}
-              videoId={videoId}
-              playlist={playlist}
-              createPlaylistOption={true}
-            />
+        openPlayListCard={openPlayListCard}
+        setOpenPlayListCard={setOpenPlayListCard}
+        videoId={videoId}
+        playlist={playlist}
+        createPlaylistOption={true}
+      />
     </div>
   );
 }

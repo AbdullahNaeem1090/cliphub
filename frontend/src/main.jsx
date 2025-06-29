@@ -34,6 +34,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppLayout from "./layout/Applayout.jsx";
 import PersonalPlaylists from "./pages/PersonalPlaylists.jsx";
 import ManagePlaylistPage from "./pages/Account/ManagePlaylistPage.jsx";
+import InfoPage from "./pages/InfoPage.jsx";
 
 
 export const queryClient = new QueryClient();
@@ -41,7 +42,8 @@ export const queryClient = new QueryClient();
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<InfoPage />} />
+      <Route path="/load" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignUpPage />} />
       <Route

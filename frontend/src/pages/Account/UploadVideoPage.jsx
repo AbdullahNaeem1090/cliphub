@@ -66,7 +66,6 @@ function UploadVideo() {
         let re = await myAxios.get(
           `/api/video/setVerifyTrue/${resp.data.data._id}`
         );
-        console.log(re);
         clearAllInputs();
         dispatch(finishProgress());
         CustomToast(dispatch, "✅ Video Upladed");

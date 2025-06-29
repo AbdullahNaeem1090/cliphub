@@ -68,8 +68,20 @@ function MyVideos() {
     },
   });
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Something went wrong</p>;
+  if (isLoading){
+    return (
+      <p className="text-white fontStyle text-3xl pb-2 mb-2 text-center mt-20">
+        loading
+      </p>
+    );
+  };
+  if (error){
+    return (
+      <p className="text-white fontStyle text-3xl pb-2 mb-2 text-center mt-20">
+        Something went wrong
+      </p>
+    );
+  };
 
   if (data.length < 1) {
     return (

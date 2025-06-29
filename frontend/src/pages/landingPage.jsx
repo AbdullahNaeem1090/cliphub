@@ -10,7 +10,6 @@ export default function LandingPage() {
   const { currUser,isAuthenticated,isAuthenticating } = useAuth()
 
 
-
   setTimeout(() => {
     if (isAuthenticated) {
       getUserPlaylists(dispatch,currUser._id)

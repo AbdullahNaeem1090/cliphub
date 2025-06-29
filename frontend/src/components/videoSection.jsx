@@ -108,7 +108,7 @@ function VideoSection({
             controls
             autoPlay
             onEnded={handleVideoEnd}
-            className="rounded-xl border-black  lg:w-full min-h-[320px]  max-h-[480px]"
+            className="rounded-xl border-black  w-full min-h-[320px]  max-h-[480px]"
           ></video>
         </div>
         <div>
