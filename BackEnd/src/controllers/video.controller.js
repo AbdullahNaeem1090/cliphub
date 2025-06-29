@@ -15,7 +15,7 @@ import mongoose from "mongoose";
 export function get_PublicId_From_URL(url) {
   console.log(url);
   
-  const publicId = url.split("/").pop().split(".")[0];
+  const publicId = url?.split("/").pop()?.split(".")[0];
   return publicId;
 }
 
