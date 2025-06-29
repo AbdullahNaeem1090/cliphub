@@ -73,6 +73,7 @@ const userLogin = asyncHandler(async (req, res) => {
     .cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: true,
+      sameSite:"None",
       maxAge: 3 * 24 * 60 * 60 * 1000,
     })
     .cookie("refreshToken", refreshToken, {
