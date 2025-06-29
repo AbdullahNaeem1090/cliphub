@@ -9,6 +9,10 @@ cloudinary.config({
 });
 
 const uploadOnCloudinary = async (localFilePath) => {
+
+  console.log(process.env.CLOUDINARY_CLOUD_NAME);
+  console.log(process.env.DB_URL);
+  
   
   try {
     if (!localFilePath) return null;
