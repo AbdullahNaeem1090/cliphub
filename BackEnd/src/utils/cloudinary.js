@@ -55,7 +55,7 @@ console.log(resp);
     return resp;
   } catch (err) {
     console.log("uyaha");
-    console.log(error);
+    console.log(err);
     
     fs.unlinkSync(localFilePath);
     return null;
