@@ -48,12 +48,14 @@ const uploadOnCloudinary = async (localFilePath) => {
 console.log("ponch gya");
 
     let resp = await cloudinary.uploader.upload(localFilePath, options);
+console.log(resp);
 
     console.log("File uploaded to Cloudinary");
     fs.unlinkSync(localFilePath);
     return resp;
   } catch (err) {
     console.log("uyaha");
+    console.log(error);
     
     fs.unlinkSync(localFilePath);
     return null;
