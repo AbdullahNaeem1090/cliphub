@@ -29,7 +29,7 @@ const SidebarVideoCard = ({ video, currVideoId, changeVideo, enableDrag }) => {
           className="self-start md:self-center p-1 cursor-grab"
         >
           <img
-            src="/src/assets/menu.png"
+            src="/icon/menu.png"
             alt="Drag"
             className="w-4 h-4 opacity-70"
           />
@@ -54,7 +54,7 @@ const SidebarVideoCard = ({ video, currVideoId, changeVideo, enableDrag }) => {
           <div className="flex items-center gap-2 mt-1">
             <div className="hidden md:block h-6 w-6 rounded-full overflow-hidden">
               <img
-                src={video.avatar || "/src/assets/defaultAvatar.png"}
+                src={video.avatar || "/icon/defaultAvatar.png"}
                 alt="avatar"
                 className="object-cover w-full h-full"
               />

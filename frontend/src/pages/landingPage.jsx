@@ -26,7 +26,7 @@ export default function LandingPage() {
       <div className="landingPageBg h-screen flex flex-col items-center  justify-center space-y-3 ">
         <div className="flex items-center">
           <img
-            src="/src/assets/logoCH.png"
+            src="/icon/logoCH.png"
             alt="Start logo"
             className="rounded-full h-28 w-28"
           />

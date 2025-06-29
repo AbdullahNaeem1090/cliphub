@@ -11,7 +11,7 @@ function FollowedChannel() {
         <div className="lg:max-w-sm rounded-lg lg:mr-4 shadow bg-gray-800 bg-opacity-50">
           <img
             className="rounded-t-lg object-cover max-h-[300px] w-full"
-            src={avatar|| "/src/assets/defaultAvatar.png"}
+            src={avatar|| "/icon/defaultAvatar.png"}
             alt=""
           />
 

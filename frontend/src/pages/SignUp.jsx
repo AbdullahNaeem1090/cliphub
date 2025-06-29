@@ -40,7 +40,7 @@ export default function SignUpPage() {
         <div className="md:mx-6 md:p-12 bg-slate-100 bg-opacity-50  rounded-3xl px-3 ">
 
           <div className="text-center ">
-            <img className="mx-auto" src="/src/assets/logoCH.png" alt="logo" />
+            <img className="mx-auto" src="/icon/logoCH.png" alt="logo" />
             <h4 className={signUpPageUI.h4BelowLogo}> ClipHub </h4>
           </div>
 

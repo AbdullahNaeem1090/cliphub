@@ -45,7 +45,7 @@ function VideoBox({
         <div className="flex w-full  mt-2 items-start relative">
           <div className=" h-9 min-w-9 max-w-9 rounded-full">
             <img
-              src={avatar || "/src/assets/defaultAvatar.png"}
+              src={avatar || "/icon/defaultAvatar.png"}
               alt=""
               className="object-cover w-full h-full rounded-full mt-1"
             />
@@ -57,7 +57,7 @@ function VideoBox({
             <p className="text-white ">{channelName}</p>
           </div>
           <img
-            src="/src/assets/more.png"
+            src="/icon/more.png"
             alt="More"
             onClick={(e) => {
               e.stopPropagation();

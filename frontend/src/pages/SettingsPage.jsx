@@ -41,20 +41,20 @@ function Settings() {
 
                             <Link to="changedp" tabIndex="0" className="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-300 hover:bg-opacity-80 focus:bg-blue-500 focus:bg-opacity-80 active:bg-blue-500 active:bg-opacity-90 hover:text-blue-900 focus:text-white active:text-blue-900 outline-none">
                                 <div className="grid place-items-center mr-4">
-                                    <img src="/src/assets/defaultAvatar.png" className="h-7 w-7" alt="" />
+                                    <img src="/icon/defaultAvatar.png" className="h-7 w-7" alt="" />
                                 </div>
                                 Change Profile Pic
                             </Link>
                             <Link to="changepass" tabIndex="0" className="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-300 hover:bg-opacity-80 focus:bg-blue-500 focus:bg-opacity-80 active:bg-blue-500 active:bg-opacity-90 hover:text-blue-900 focus:text-white active:text-blue-900 outline-none">
                                 <div className="grid place-items-center mr-4">
-                                    <img src="/src/assets/password.png" className="h-7 w-7" alt="" />
+                                    <img src="/icon/password.png" className="h-7 w-7" alt="" />
                                 </div>
                                 Change Current Pass
                             </Link>
 
                             <div onClick={() => setShowLogOut((prev) => !prev)} tabIndex="0" className="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-300 hover:bg-opacity-80 focus:bg-blue-500 focus:bg-opacity-80 active:bg-blue-500 active:bg-opacity-90 hover:text-blue-900 focus:text-white active:text-blue-900 outline-none cursor-pointer">
                                 <div className="grid place-items-center mr-4">
-                                    <img src="/src/assets/logout.png" className="h-7 w-7" alt="" />
+                                    <img src="/icon/logout.png" className="h-7 w-7" alt="" />
                                 </div>
                                 Logout
                             </div>

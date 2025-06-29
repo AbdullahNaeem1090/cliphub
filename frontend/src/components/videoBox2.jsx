@@ -42,7 +42,7 @@ function VideoBox2({
       <div className="flex md:w-full md:pl-3 relative">
         <div className="md:hidden h-12 w-12 m-2 rounded-full ">
           <img
-            src={avatar || "/src/assets/defaultAvatar.png"}
+            src={avatar || "/icon/defaultAvatar.png"}
             alt=""
             className="object cover w-full h-full rounded-full"
           />
@@ -54,14 +54,14 @@ function VideoBox2({
           <div className="md:flex items-center">
             <div className="hidden md:block h-6 max-w-6 m-2 rounded-full">
               <img
-                src={avatar || "/src/assets/defaultAvatar.png"}
+                src={avatar || "/icon/defaultAvatar.png"}
                 alt=""
                 className="object cover w-full h-full rounded-full"
               />
             </div>
             <p className="mb-1 text-slate-300">{channelName}</p>
             <img
-              src="/src/assets/more.png"
+              src="/icon/more.png"
               alt="More"
               onClick={(e) => {
                 e.stopPropagation();

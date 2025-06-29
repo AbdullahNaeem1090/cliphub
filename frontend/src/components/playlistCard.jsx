@@ -10,7 +10,7 @@ function PlaylistCard({ playlist, onNavigate, onDelete, thumbnail,deleteControl 
         <div className="absolute top-1 left-2 w-full h-full bg-gray-500 rounded-md opacity-40 z-0" />
         <img
           className="relative w-full h-full object-cover rounded-md z-10"
-          src={thumbnail || "/src/assets/defaultPlaylist.png"}
+          src={thumbnail || "/icon/defaultPlaylist.png"}
           alt="Playlist Thumbnail"
         />
       </div>
@@ -23,7 +23,7 @@ function PlaylistCard({ playlist, onNavigate, onDelete, thumbnail,deleteControl 
         {
           deleteControl &&
           <img
-          src="/src/assets/delete.png"
+          src="/icon/delete.png"
           className="h-6 w-6 hover:scale-110 transition-transform duration-150"
           alt="Delete"
           onClick={(e) => {

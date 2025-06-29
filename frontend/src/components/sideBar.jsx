@@ -16,7 +16,7 @@ function SideBar({showSideBar}) {
                 to=""
                 className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gradient-to-r from-gray-950 via-blue-800 to-gray-950"
               >
-                <img src="/src/assets/home.png" alt="" className="h-6 w-6 " />
+                <img src="/icon/home.png" alt="" className="h-6 w-6 " />
                 <span className="ms-3 text-white">Home</span>
               </Link>
             </li>
@@ -26,7 +26,7 @@ function SideBar({showSideBar}) {
                 className="flex items-center p-2 text-gray-900 rounded-lg  hover:bg-gradient-to-r from-gray-950 via-blue-800 to-gray-950"
               >
                 <img
-                  src="/src/assets/channel.png"
+                  src="/icon/channel.png"
                   alt=""
                   className="h-6 w-6 "
                 />
@@ -39,7 +39,7 @@ function SideBar({showSideBar}) {
                 className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gradient-to-r from-gray-950 via-blue-800 to-gray-950 "
               >
                 <img
-                  src="/src/assets/subscriptions.png"
+                  src="/icon/subscriptions.png"
                   alt=""
                   className="h-6 w-6 "
                 />
@@ -58,7 +58,7 @@ function SideBar({showSideBar}) {
                 className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gradient-to-r from-gray-950 via-blue-800 to-gray-950"
               >
                 <img
-                  src="/src/assets/playlist.png"
+                  src="/icon/playlist.png"
                   alt=""
                   className="h-6 w-6 "
                 />
@@ -73,7 +73,7 @@ function SideBar({showSideBar}) {
                 className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gradient-to-r from-gray-950 via-blue-800 to-gray-950"
               >
                 <img
-                  src="/src/assets/history.png"
+                  src="/icon/history.png"
                   alt=""
                   className="h-6 w-6 "
                 />
@@ -88,7 +88,7 @@ function SideBar({showSideBar}) {
                 className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gradient-to-r from-gray-950 via-blue-800 to-gray-950"
               >
                 <img
-                  src="/src/assets/settings.png"
+                  src="/icon/settings.png"
                   alt=""
                   className="h-6 w-6 "
                 />

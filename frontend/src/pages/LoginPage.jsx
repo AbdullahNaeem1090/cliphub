@@ -49,7 +49,7 @@ export default function LoginPage() {
                 <div className='flex space-x-3 bg-slate-300 px-4 py-4 rounded-3xl bg-opacity-60 '>
                     <div className={loginPageUI.centralLeftDiv}>
                         <div className='mt-2'>
-                            <img src="/src/assets/cliphub.png" alt="" className='w-60 h-14 rounded-full' />
+                            <img src="/icon/cliphub.png" alt="" className='w-60 h-14 rounded-full' />
                         </div>
                         <div className='px-3 w-full'>
                             <p className='text-3xl font-bold'>🙂 Welcome!</p>

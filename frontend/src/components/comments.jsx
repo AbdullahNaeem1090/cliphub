@@ -172,7 +172,7 @@ function Comments() {
                       className="mr-2 w-6 h-6 rounded-full"
                       src={
                         comment?.commenter?.avatar ||
-                        "/src/assets/defaultAvatar.png"
+                        "/icon/defaultAvatar.png"
                       }
                       alt="Michael Gough"
                     />
@@ -181,7 +181,7 @@ function Comments() {
                 </div>
                 {currUser?._id == comment?.author && (
                   <img
-                    src="/src/assets/delete.png"
+                    src="/icon/delete.png"
                     className="h-6 w-6 cursor-pointer"
                     alt=""
                     onClick={() => deleteComment(comment._id, index)}
@@ -196,7 +196,7 @@ function Comments() {
                   className="flex items-center text-sm text-gray-500  font-medium"
                 >
                   <img
-                    src="/src/assets/reply.png"
+                    src="/icon/reply.png"
                     alt=""
                     className="w-6 h-6 mr-2"
                   />
@@ -221,7 +221,7 @@ function Comments() {
                     placeholder=" Reply . . ."
                   />
                   <img
-                    src="/src/assets/send.png"
+                    src="/icon/send.png"
                     className="h-8 w-8 items-center cursor-pointer"
                     alt=""
                     onClick={() => {
@@ -249,7 +249,7 @@ function Comments() {
                           className="mr-2 w-6 h-6 rounded-full"
                           src={
                             reply.replier?.avatar ||
-                            "/src/assets/defaultAvatar.png"
+                            "/icon/defaultAvatar.png"
                           }
                           alt="Profile"
                         />
@@ -258,7 +258,7 @@ function Comments() {
 
                       {(reply?.author||reply.replier?._id) === currUser._id && (
                         <img
-                          src="/src/assets/delete.png"
+                          src="/icon/delete.png"
                           className="h-6 w-6 cursor-pointer"
                           alt=""
                           onClick={() =>

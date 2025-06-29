@@ -41,7 +41,7 @@ function SearchResultVideosPage() {
 
                                 <div className="flex md:w-full md:pl-3">
                                     <div className='md:hidden h-12 w-12 m-2 rounded-full '>
-                                        <img src={video.avatar || "/src/assets/defaultAvatar.png"} alt="" className='object cover w-full h-full rounded-full' />
+                                        <img src={video.avatar || "/icon/defaultAvatar.png"} alt="" className='object cover w-full h-full rounded-full' />
                                     </div>
                                     <div className="flex flex-col pl-1 pt-1  leading-normal md:w-full">
                                         <h5 className="mb-1 text-2xl font-bold tracking-tight text-slate-200  max-h-24  overflow-hidden">
@@ -49,7 +49,7 @@ function SearchResultVideosPage() {
                                         </h5>
                                         <div className="md:flex items-center">
                                             <div className='hidden md:block h-6 max-w-6 m-2 rounded-full'>
-                                                <img src={video.avatar || "/src/assets/defaultAvatar.png"} alt="" className='object cover w-full h-full rounded-full' />
+                                                <img src={video.avatar || "/icon/defaultAvatar.png"} alt="" className='object cover w-full h-full rounded-full' />
                                             </div>
                                             <p className="mb-1 text-slate-300">
                                                 {video.username}

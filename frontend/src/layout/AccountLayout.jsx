@@ -12,7 +12,7 @@ function AccountLayout() {
       <div className="flex flex-col items-center pb-3 max-w-md mx-auto border-b border-gray-500 mt-5 ">
         <img
           className="w-36 h-36 object-cover mb-3 rounded-full antialiased border-gray-700 bg-gradient-to-r from-green-400 via-blue-700 to-pink-600 p-0.5 border-2"
-          src={currUser?.avatar || "/src/assets/defaultAvatar.png"}
+          src={currUser?.avatar || "/icon/defaultAvatar.png"}
           alt="pic"
         />
         <h5 className="mb-1 text-xl font-medium text-white">{currUser.email}</h5>

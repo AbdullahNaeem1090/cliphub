@@ -34,7 +34,7 @@ function Subscription() {
     try {
         let obj = data.find((obj) => obj.Channel._id === id);
         let Channel = obj?.Channel;
-        const avatar = Channel.avatar ||  "/src/assets/defaultAvatar.png";
+        const avatar = Channel.avatar ||  "/icon/defaultAvatar.png";
         navigate(
           `../followedPage/${encodeURIComponent(Channel._id)}/${encodeURIComponent(Channel.username)}/${encodeURIComponent(Channel.email)}/${encodeURIComponent(avatar)}/${encodeURIComponent(Channel.subscribersCount)}`
         );
@@ -92,7 +92,7 @@ function Subscription() {
               <div className="flex-shrink-0">
                 <img
                   className="w-10 h-10 rounded-full object-cover"
-                  src={card.Channel.avatar || "/src/assets/defaultAvatar.png"}
+                  src={card.Channel.avatar || "/icon/defaultAvatar.png"}
                   alt="image"
                 />
               </div>

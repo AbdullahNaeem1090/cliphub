@@ -7,6 +7,7 @@ import { CustomToast } from "../../utils/showUtils";
 import { finishProgress, showProgress } from "../../slices/videoUploadSlice";
 import { useAuth } from "../../protection/useAuth";
 import { myAxios } from "../../utils/axiosInstance";
+import axios from "axios";
 
 function UploadVideo() {
   const dispatch = useDispatch();
@@ -80,9 +81,10 @@ function UploadVideo() {
         );
       }
     } catch (error) {
-      if (myAxios.isCancel(error)) {
+      if (axios.isCancel(error)) {
         console.log("Upload canceled by user!");
       }
+    }finally{
       dispatch(finishProgress());
     }
   }
@@ -109,7 +111,7 @@ function UploadVideo() {
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <img
-                  src="/src/assets/upload.png"
+                  src="/icon/upload.png"
                   className="w-8 h-8 mb-4text-gray-400"
                   alt=""
                 />
@@ -141,7 +143,7 @@ function UploadVideo() {
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <img
-                  src="/src/assets/upload.png"
+                  src="/icon/upload.png"
                   className="w-8 h-8 mb-4text-gray-400"
                   alt=""
                 />

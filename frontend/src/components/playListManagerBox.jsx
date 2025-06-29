@@ -112,7 +112,7 @@ function PlaylistBox({
             setIsPlaylistNameInpVisible(false);
           }}
         >
-          <img src="/src/assets/close.png" className="h-5 w-5" alt="" />
+          <img src="/icon/close.png" className="h-5 w-5" alt="" />
         </button>
       </div>
       <ul>
@@ -154,7 +154,7 @@ function PlaylistBox({
             onClick={() => setIsPlaylistNameInpVisible(true)}
           >
             Create Playlist{" "}
-            <img src="/src/assets/add.png" className="h-5 w-5" alt="" />
+            <img src="/icon/add.png" className="h-5 w-5" alt="" />
           </button>
           <div
             className={isPlaylistNameInpVisible ? "flex flex-col " : "hidden"}

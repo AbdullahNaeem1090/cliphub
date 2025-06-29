@@ -121,7 +121,7 @@ function VideoSection({
                 <img
                   src={
                     currVideo?.VideoCreator?.avatar ||
-                    "/src/assets/defaultAvatar.png"
+                    "/icon/defaultAvatar.png"
                   }
                   className="object-cover h-11 w-12 rounded-full"
                   alt=""
@@ -150,7 +150,7 @@ function VideoSection({
                 onClick={() => setOpenplaylistCard(true)}
               >
                 <img
-                  src={`/src/assets/${isInPlaylist ? "saved" : "save"}.png`}
+                  src={`/icon/${isInPlaylist ? "saved" : "save"}.png`}
                   alt=""
                   className="md:h-8 md:w-8 h-6 w-6"
                 />
@@ -169,7 +169,7 @@ function VideoSection({
                 }
               >
                 <img
-                  src={`/src/assets/${
+                  src={`/icon/${
                     currVideo.isLikedByCurrentUser ? "liked" : "like"
                   }.png`}
                   alt="like Picture"
@@ -198,7 +198,7 @@ function VideoSection({
         <div className="flex justify-between">
           <p className="text-white font-bold text-2xl">Description</p>
           <img
-            src="/src/assets/logout.png"
+            src="/icon/logout.png"
             className="h-7 w-7 cursor-pointer"
             onClick={() => setdescription((prev) => !prev)}
             alt=""

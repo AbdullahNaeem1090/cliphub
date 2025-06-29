@@ -84,7 +84,7 @@ function WatchPageSideVideos() {
                     <div className="md:flex items-center">
                       <div className="hidden md:block h-6 w-6 my-1 rounded-full">
                         <img
-                          src={video.avatar || "/src/assets/defaultAvatar.png"}
+                          src={video.avatar || "/icon/defaultAvatar.png"}
                           alt=""
                           className="object cover w-full h-full rounded-full"
                         />

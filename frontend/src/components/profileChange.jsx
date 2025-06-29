@@ -64,7 +64,7 @@ function ProfilePic() {
       className="flex flex-col items-center space-y-4 lg:w-1/3 md:2/3 mx-auto border border-gray-700 rounded-2xl py-3 mb-2 overflow-hidden mt-3 gradient-bg"
     >
       <img
-        src={selectedImage || avatarUrl || "/src/assets/defaultAvatar.png"}
+        src={selectedImage || avatarUrl || "/icon/defaultAvatar.png"}
         alt="Preview"
         className="h-36 w-36 rounded-full object-cover border border-white"
       />

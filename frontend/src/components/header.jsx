@@ -54,7 +54,7 @@ function Header({ setShowSideBar, setResult }) {
       let resp = await myAxios.get(`/api/user/getChannel/${suggestion._id}`);
       if (resp.data.success) {
         let Channel=resp.data?.data[0]
-        const avatar = Channel.avatar ||  "/src/assets/defaultAvatar.png"
+        const avatar = Channel.avatar ||  "/icon/defaultAvatar.png"
         navigate(
           `/main/followedPage/${encodeURIComponent(Channel._id)}/${encodeURIComponent(Channel.username)}/${encodeURIComponent(Channel.email)}/${encodeURIComponent(avatar)}/${encodeURIComponent(Channel.subscribersCount)}`
         );
@@ -69,14 +69,14 @@ function Header({ setShowSideBar, setResult }) {
         {showSearchBar ? (
           <nav className="bg-gradient-to-r from-black via-blue-800 to-black w-screen h-16 flex items-center justify-center space-x-2 sm:hidden">
             <div onClick={() => setShowSearchBar((prev) => !prev)}>
-              <img src="/src/assets/back.png" alt="" className="h-8 w-8" />
+              <img src="/icon/back.png" alt="" className="h-8 w-8" />
             </div>
             <div className="w-[80%]  ">
               {/* <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label> */}
               <div className="relative">
                 <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                   <img
-                    src="/src/assets/search.png"
+                    src="/icon/search.png"
                     alt=""
                     className="h-6 w-6"
                   />
@@ -120,10 +120,10 @@ function Header({ setShowSideBar, setResult }) {
                 className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-10"
                 onClick={() => setShowSideBar((prev) => !prev)}
               >
-                <img src="/src/assets/menu.png" alt="" className="w-7 h-7" />
+                <img src="/icon/menu.png" alt="" className="w-7 h-7" />
               </button>
               <div className="flex items-center justify-center">
-                <img src="/src/assets/logoCH.png" alt="" className="w-9 h-9" />
+                <img src="/icon/logoCH.png" alt="" className="w-9 h-9" />
                 <p className="font-extrabold fontStyle greet text-2xl text-white">
                   ClipHub
                 </p>
@@ -134,7 +134,7 @@ function Header({ setShowSideBar, setResult }) {
               <div className="relative">
                 <div className="absolute inset-y-0 start-0 flex items-center ps-3">
                   <img
-                    src="/src/assets/search.png"
+                    src="/icon/search.png"
                     alt=""
                     className="h-6 w-6"
                   />
@@ -173,7 +173,7 @@ function Header({ setShowSideBar, setResult }) {
               <button type="button" className="relative inline-flex ">
                 <div onClick={() => setShowSearchBar((prev) => !prev)}>
                   <img
-                    src="/src/assets/search.png"
+                    src="/icon/search.png"
                     alt=""
                     className="h-8 w-8 mr-2 sm:hidden"
                   />
@@ -181,7 +181,7 @@ function Header({ setShowSideBar, setResult }) {
               </button>
               <div className="shadow-white-ligh">
                 <img
-                  src={`${avatar ? avatar : "/src/assets/defaultAvatar.png"}`}
+                  src={`${avatar ? avatar : "/icon/defaultAvatar.png"}`}
                   alt=""
                   className="h-10 w-10 object-cover rounded-full"
                 />
