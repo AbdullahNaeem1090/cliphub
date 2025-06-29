@@ -23,6 +23,9 @@ export function get_PublicId_From_URL(url) {
 const uploadVideo = asyncHandler(async (req, res) => {
   const { owner, title, description } = req.body;
 
+  console.log('called uploading');
+  
+
   if ([owner, title].some((field) => field?.trim() === "")) {
     return res
       .status(400)
