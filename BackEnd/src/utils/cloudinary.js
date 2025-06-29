@@ -3,17 +3,18 @@ import fs from "fs";
 import path from "path"
 
 cloudinary.config({
-  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
-  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
-  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const uploadOnCloudinary = async (localFilePath) => {
+  console.log("me hi", {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
 
-  console.log(process.env.CLOUDINARY_CLOUD_NAME);
-  console.log(process.env.DB_URL);
-  
-  
   try {
     if (!localFilePath) return null;
 
@@ -45,28 +46,25 @@ const uploadOnCloudinary = async (localFilePath) => {
         resource_type: "auto",
       };
     }
-console.log("ponch gya");
 
     let resp = await cloudinary.uploader.upload(localFilePath, options);
-console.log(resp);
 
     console.log("File uploaded to Cloudinary");
     fs.unlinkSync(localFilePath);
     return resp;
   } catch (err) {
-    console.log("uyaha");
     console.log(err);
-    
+
     fs.unlinkSync(localFilePath);
     return null;
   }
 };
 
 
-const deletefromCloudinary= async (publicIdAray,type) => {
+const deletefromCloudinary = async (publicIdAray, type) => {
   try {
-    const result = await cloudinary.api.delete_resources(publicIdAray,{
-      resource_type: type,  
+    const result = await cloudinary.api.delete_resources(publicIdAray, {
+      resource_type: type,
     });
   } catch (error) {
     console.error("Error deleting video:", error);
@@ -76,5 +74,5 @@ const deletefromCloudinary= async (publicIdAray,type) => {
 
 
 
-export { uploadOnCloudinary,deletefromCloudinary };
+export { uploadOnCloudinary, deletefromCloudinary };
 
