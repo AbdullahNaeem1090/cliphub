@@ -23,7 +23,7 @@ export function get_PublicId_From_URL(url) {
 const uploadVideo = asyncHandler(async (req, res) => {
   const { owner, title, description } = req.body;
 
-  console.log('called uploading');
+  console.log('called uploading 1');
   
 
   if ([owner, title].some((field) => field?.trim() === "")) {
@@ -31,6 +31,9 @@ const uploadVideo = asyncHandler(async (req, res) => {
       .status(400)
       .json({ message: "Some field is missing", success: false });
   }
+
+  console.log('called uploading 2');
+
 
   const vidUrl = req.files?.vid[0].path;
   const picUrl = req.files?.pic[0].path;
@@ -41,8 +44,14 @@ const uploadVideo = asyncHandler(async (req, res) => {
       .json({ message: "Uploading file is missing", success: false });
   }
 
+  console.log('called uploading 3');
+
+
   const videoUploaded = await uploadOnCloudinary(vidUrl);
   const picUploaded = await uploadOnCloudinary(picUrl);
+
+
+  console.log('called uploading 4');
 
 
   if (!(videoUploaded?.url && picUploaded?.url)) {
@@ -52,6 +61,9 @@ const uploadVideo = asyncHandler(async (req, res) => {
   } else {
     console.log("Uploaded");
   }
+
+  console.log('called uploading 5');
+
 
   const creatingVideoDoc = await videoModel.create({
     videoURL: videoUploaded.url,
