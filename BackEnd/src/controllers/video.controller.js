@@ -8,12 +8,13 @@ import {
   uploadOnCloudinary,
 } from "../utils/cloudinary.js";
 import { playlistModel } from "../models/playlist.model.js";
-import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
 // -------------------------------------------
 
 export function get_PublicId_From_URL(url) {
+  console.log(url);
+  
   const publicId = url.split("/").pop().split(".")[0];
   return publicId;
 }
@@ -23,7 +24,7 @@ export function get_PublicId_From_URL(url) {
 const uploadVideo = asyncHandler(async (req, res) => {
   const { owner, title, description } = req.body;
 
-  console.log('called uploading 1');
+  
   
 
   if ([owner, title].some((field) => field?.trim() === "")) {
