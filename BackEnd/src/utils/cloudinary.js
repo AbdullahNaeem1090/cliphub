@@ -3,9 +3,9 @@ import fs from "fs";
 import path from "path"
 
 cloudinary.config({
-  CLOUDINARY_CLOUD_NAME: process.env.CLOUD_NAME,
-  CLOUDINARY_API_KEY: process.env.API_KEY,
-  CLOUDINARY_API_SECRET: process.env.API_SECRET,
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
 });
 
 const uploadOnCloudinary = async (localFilePath) => {
@@ -42,7 +42,6 @@ const uploadOnCloudinary = async (localFilePath) => {
       };
     }
 console.log("ponch gya");
-console.log(localFilePath);
 
     let resp = await cloudinary.uploader.upload(localFilePath, options);
 
